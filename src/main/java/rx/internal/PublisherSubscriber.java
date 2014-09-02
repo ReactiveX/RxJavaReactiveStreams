@@ -1,0 +1,69 @@
+package rx.internal;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import rx.Producer;
+import rx.functions.Action0;
+import rx.subscriptions.Subscriptions;
+
+/**
+ * Copyright 2014 Netflix, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+public class PublisherSubscriber<T> implements Subscriber<T> {
+    private final rx.Subscriber<? super T> rxSubscriber;
+
+    public PublisherSubscriber(rx.Subscriber<? super T> rxSubscriber) {
+        this.rxSubscriber = rxSubscriber;
+    }
+
+    @Override
+    public void onSubscribe(final Subscription rsSubscription) {
+        rxSubscriber.setProducer(new Producer() {
+            @Override
+            public void request(long n) {
+                // 0.4.0.M1 of reactive streams is bugged in that Subsription.request() takes an int
+                // https://github.com/reactive-streams/reactive-streams/issues/105
+                // MUST update this after that change
+                if (n <= Integer.MAX_VALUE) {
+                    rsSubscription.request((int) n);
+                } else {
+                    rsSubscription.request(Integer.MAX_VALUE);
+                }
+            }
+        });
+
+        rxSubscriber.add(Subscriptions.create(new Action0() {
+            @Override
+            public void call() {
+                rsSubscription.cancel();
+            }
+        }));
+    }
+
+    @Override
+    public void onNext(T t) {
+        rxSubscriber.onNext(t);
+    }
+
+    @Override
+    public void onError(Throwable t) {
+        rxSubscriber.onError(t);
+    }
+
+    @Override
+    public void onComplete() {
+        rxSubscriber.onCompleted();
+    }
+}

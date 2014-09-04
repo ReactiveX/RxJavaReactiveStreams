@@ -43,6 +43,7 @@ public class ObservableSubscriber<T> extends rx.Subscriber<T> {
     public ObservableSubscriber(final Subscriber<? super T> rsSubscriber) {
         this.rsSubscriber = rsSubscriber;
 
+        // Reactive streams contract requires not sending anything until an explicit request is made
         request(0);
 
         rsSubscriber.onSubscribe(new Subscription() {

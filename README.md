@@ -6,7 +6,7 @@ Learn more about RxJava on the <a href="https://github.com/ReactiveX/RxJava/wiki
 
 ## Master Build Status
 
-<a href='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams/builds'><img src='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams.svg?branch=1.x'></a>
+<a href='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams/builds'><img src='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams.svg?branch=0.x'></a>
 
 ## Communication
 

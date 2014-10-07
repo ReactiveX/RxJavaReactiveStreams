@@ -41,7 +41,7 @@ public class ObservablePublisher<T> implements Publisher<T> {
     }
 
     @Override
-    public void subscribe(final Subscriber<T> s) {
+    public void subscribe(final Subscriber<? super T> s) {
         RxReactiveStreams.subscribe(observable, s);
     }
 

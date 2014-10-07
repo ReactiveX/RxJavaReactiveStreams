@@ -48,14 +48,7 @@ public class PublisherSubscriber<T> implements Subscriber<T> {
         rxSubscriber.setProducer(new Producer() {
             @Override
             public void request(long n) {
-                // 0.4.0.M1 of reactive streams is bugged in that Subsription.request() takes an int
-                // https://github.com/reactive-streams/reactive-streams/issues/105
-                // MUST update this after that change
-                if (n <= Integer.MAX_VALUE) {
-                    rsSubscription.request((int) n);
-                } else {
-                    rsSubscription.request(Integer.MAX_VALUE);
-                }
+                rsSubscription.request(n);
             }
         });
 

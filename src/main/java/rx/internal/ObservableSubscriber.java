@@ -30,7 +30,7 @@ public class ObservableSubscriber<T> extends rx.Subscriber<T> {
     /**
      * The wrapped Reactive Streams {@link Subscriber}.
      */
-    private final Subscriber<T> rsSubscriber;
+    private final Subscriber<? super T> rsSubscriber;
 
     /**
      * Creates a new {@link ObservableSubscriber}.
@@ -40,14 +40,14 @@ public class ObservableSubscriber<T> extends rx.Subscriber<T> {
      *
      * @param rsSubscriber the subscriber to wrap.
      */
-    public ObservableSubscriber(final Subscriber<T> rsSubscriber) {
+    public ObservableSubscriber(final Subscriber<? super T> rsSubscriber) {
         this.rsSubscriber = rsSubscriber;
 
         request(0);
 
         rsSubscriber.onSubscribe(new Subscription() {
             @Override
-            public void request(int n) {
+            public void request(long n) {
                 ObservableSubscriber.this.request(n);
             }
 

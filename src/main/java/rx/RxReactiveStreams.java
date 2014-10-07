@@ -22,21 +22,48 @@ import rx.internal.ObservableSubscriber;
 import rx.internal.PublisherObservableOnSubscribe;
 import rx.internal.PublisherSubscriber;
 
+/**
+ * The {@link RxReactiveStreams} helper class provides static utility methods to convert to and from
+ * {@link Observable}s and {@link Publisher}s.
+ */
 public class RxReactiveStreams {
 
+    /**
+     * Convert a Rx {@link Observable} into a Reactive Streams {@link Publisher}.
+     *
+     * @param observable the {@link Observable} to convert.
+     * @return the converted {@link Publisher}.
+     */
     public static <T> Publisher<T> toPublisher(Observable<T> observable) {
         return new ObservablePublisher<T>(observable);
     }
 
+    /**
+     * Convert a Reactive Streams {@link Publisher} into a Rx {@link Observable}.
+     *
+     * @param publisher the {@link Publisher} to convert.
+     * @return the converted {@link Observable}.
+     */
     public static <T> Observable<T> toObservable(final Publisher<T> publisher) {
         return Observable.create(new PublisherObservableOnSubscribe<T>(publisher));
     }
 
-    // Make subscriber contravariant after https://github.com/reactive-streams/reactive-streams/issues/104 is fixed
-    public static <T> void subscribe(Observable<T> observable, Subscriber<T> subscriber) {
+    /**
+     * Subscribe to the given Rx {@link Observable} with a Reactive Streams {@link Subscriber}.
+     *
+     * @param observable the {@link Observable} to subscribe to.
+     * @param subscriber the {@link Subscriber} which subscribes.
+     */
+    public static <T> void subscribe(Observable<T> observable, Subscriber<? super T> subscriber) {
         observable.subscribe(new ObservableSubscriber<T>(subscriber));
     }
 
+    /**
+     * Subscribe to the given {@link Publisher} with a Rx {@link Subscriber}.
+     *
+     * @param publisher the {@link Publisher} to subscribe to.
+     * @param subscriber the {@link rx.Subscriber} which subscribes.
+     */
     public static <T> void subscribe(Publisher<T> publisher, rx.Subscriber<? super T> subscriber) {
         publisher.subscribe(new PublisherSubscriber<T>(subscriber));
     }

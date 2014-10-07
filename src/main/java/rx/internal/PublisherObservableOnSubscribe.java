@@ -19,11 +19,23 @@ import org.reactivestreams.Publisher;
 import rx.Observable;
 import rx.RxReactiveStreams;
 
+/**
+ * The {@link PublisherObservableOnSubscribe} wraps a Reactive Streams {@link Publisher} and allows to subscribe with
+ * a Rx {@link rx.Subscriber}.
+ */
 public class PublisherObservableOnSubscribe<T> implements Observable.OnSubscribe<T> {
 
+    /**
+     * The wrapped {@link Publisher}.
+     */
     private final Publisher<T> publisher;
 
-    public PublisherObservableOnSubscribe(Publisher<T> publisher) {
+    /**
+     * Creates a new {@link PublisherObservableOnSubscribe}.
+     *
+     * @param publisher the publisher where a Rx {@link rx.Subscriber} can subscribe.
+     */
+    public PublisherObservableOnSubscribe(final Publisher<T> publisher) {
         this.publisher = publisher;
     }
 

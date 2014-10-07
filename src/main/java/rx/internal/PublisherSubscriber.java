@@ -1,11 +1,3 @@
-package rx.internal;
-
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-import rx.Producer;
-import rx.functions.Action0;
-import rx.subscriptions.Subscriptions;
-
 /**
  * Copyright 2014 Netflix, Inc.
  *
@@ -21,9 +13,32 @@ import rx.subscriptions.Subscriptions;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package rx.internal;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import rx.Producer;
+import rx.functions.Action0;
+import rx.subscriptions.Subscriptions;
+
+/**
+ * The {@link PublisherSubscriber} wraps an Rx {@link rx.Subscriber} and forwards it all events from the corresponding
+ * {@link Subscriber}.
+ *
+ * Note that it also supports backpressure and subscription management.
+ */
 public class PublisherSubscriber<T> implements Subscriber<T> {
+
+    /**
+     * The wrapped Rx {@link rx.Subscriber}.
+     */
     private final rx.Subscriber<? super T> rxSubscriber;
 
+    /**
+     * Creates a new {@link PublisherSubscriber}.
+     *
+     * @param rxSubscriber the Rx {@link rx.Subscriber} that gets wrapped and notified.
+     */
     public PublisherSubscriber(rx.Subscriber<? super T> rxSubscriber) {
         this.rxSubscriber = rxSubscriber;
     }

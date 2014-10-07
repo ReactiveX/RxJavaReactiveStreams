@@ -1,11 +1,3 @@
-package rx.test;
-
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import java.util.Iterator;
-
 /**
  * Copyright 2014 Netflix, Inc.
  *
@@ -21,6 +13,14 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package rx.test;
+
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
+import java.util.Iterator;
+
 public class IterablePublisher<T> implements Publisher<T> {
 
     private final Iterable<T> iterable;

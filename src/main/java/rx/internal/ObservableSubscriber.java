@@ -16,7 +16,6 @@
 package rx.internal;
 
 import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import rx.Observable;
 
 /**
@@ -30,7 +29,7 @@ public class ObservableSubscriber<T> extends rx.Subscriber<T> {
     /**
      * The wrapped Reactive Streams {@link Subscriber}.
      */
-    private final Subscriber<? super T> rsSubscriber;
+    private final ManagedSubscription<T> subscription;
 
     /**
      * Creates a new {@link ObservableSubscriber}.
@@ -40,37 +39,42 @@ public class ObservableSubscriber<T> extends rx.Subscriber<T> {
      *
      * @param rsSubscriber the subscriber to wrap.
      */
-    public ObservableSubscriber(final Subscriber<? super T> rsSubscriber) {
-        this.rsSubscriber = rsSubscriber;
-
+    public ObservableSubscriber(Subscriber<? super T> rsSubscriber) {
         // Reactive streams contract requires not sending anything until an explicit request is made
-        request(0);
-
-        rsSubscriber.onSubscribe(new Subscription() {
+        subscription = new ManagedSubscription<T>(rsSubscriber) {
             @Override
-            public void request(long n) {
+            protected void doRequest(long n) {
                 ObservableSubscriber.this.request(n);
             }
 
             @Override
-            public void cancel() {
+            protected void doCancel() {
                 unsubscribe();
             }
-        });
+        };
+    }
+
+    public void postSubscribe() {
+        subscription.start();
+    }
+
+    @Override
+    public void onStart() {
+        request(0);
     }
 
     @Override
     public void onCompleted() {
-        rsSubscriber.onComplete();
+        subscription.onComplete();
     }
 
     @Override
     public void onError(Throwable e) {
-        rsSubscriber.onError(e);
+        subscription.onError(e);
     }
 
     @Override
     public void onNext(T t) {
-        rsSubscriber.onNext(t);
+        subscription.onNext(t);
     }
 }

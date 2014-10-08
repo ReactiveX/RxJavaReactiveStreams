@@ -15,15 +15,17 @@
  */
 package rx;
 
-import org.junit.Test;
 import org.reactivestreams.Publisher;
+import org.testng.annotations.Test;
 import rx.test.CollectingRsSubscriber;
 import rx.test.CollectingRxSubscriber;
 import rx.test.IterablePublisher;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 public class RxReactiveStreamsTest {
 

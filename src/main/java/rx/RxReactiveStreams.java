@@ -55,7 +55,9 @@ public class RxReactiveStreams {
      * @param subscriber the {@link Subscriber} which subscribes.
      */
     public static <T> void subscribe(Observable<T> observable, Subscriber<? super T> subscriber) {
-        observable.subscribe(new ObservableSubscriber<T>(subscriber));
+        ObservableSubscriber<T> subscriberBridge = new ObservableSubscriber<T>(subscriber);
+        observable.subscribe(subscriberBridge);
+        subscriberBridge.postSubscribe();
     }
 
     /**

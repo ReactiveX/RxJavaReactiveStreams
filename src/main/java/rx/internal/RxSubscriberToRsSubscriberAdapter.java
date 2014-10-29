@@ -21,25 +21,11 @@ import rx.Producer;
 import rx.functions.Action0;
 import rx.subscriptions.Subscriptions;
 
-/**
- * The {@link PublisherSubscriber} wraps an Rx {@link rx.Subscriber} and forwards it all events from the corresponding
- * {@link Subscriber}.
- *
- * Note that it also supports backpressure and subscription management.
- */
-public class PublisherSubscriber<T> implements Subscriber<T> {
+public class RxSubscriberToRsSubscriberAdapter<T> implements Subscriber<T> {
 
-    /**
-     * The wrapped Rx {@link rx.Subscriber}.
-     */
     private final rx.Subscriber<? super T> rxSubscriber;
 
-    /**
-     * Creates a new {@link PublisherSubscriber}.
-     *
-     * @param rxSubscriber the Rx {@link rx.Subscriber} that gets wrapped and notified.
-     */
-    public PublisherSubscriber(rx.Subscriber<? super T> rxSubscriber) {
+    public RxSubscriberToRsSubscriberAdapter(rx.Subscriber<? super T> rxSubscriber) {
         this.rxSubscriber = rxSubscriber;
     }
 

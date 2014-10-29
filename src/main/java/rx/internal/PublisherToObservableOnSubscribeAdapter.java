@@ -16,33 +16,20 @@
 package rx.internal;
 
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import rx.Observable;
 import rx.RxReactiveStreams;
 
-/**
- * The {@link ObservablePublisher} wraps a Rx {@link Observable} and allows to subscribe to it with a Reactive Streams
- * {@link Subscriber}.
- */
-public class ObservablePublisher<T> implements Publisher<T> {
+public class PublisherToObservableOnSubscribeAdapter<T> implements Observable.OnSubscribe<T> {
 
-    /**
-     * The wrapped Rx {@link Observable}.
-     */
-    private final Observable<T> observable;
+    private final Publisher<T> publisher;
 
-    /**
-     * Creates a new {@link ObservablePublisher}.
-     *
-     * @param observable the {@link Observable} to wrap.
-     */
-    public ObservablePublisher(final Observable<T> observable) {
-        this.observable = observable;
+    public PublisherToObservableOnSubscribeAdapter(final Publisher<T> publisher) {
+        this.publisher = publisher;
     }
 
     @Override
-    public void subscribe(final Subscriber<? super T> s) {
-        RxReactiveStreams.subscribe(observable, s);
+    public void call(final rx.Subscriber<? super T> rxSubscriber) {
+        RxReactiveStreams.subscribe(publisher, rxSubscriber);
     }
 
 }

@@ -16,35 +16,17 @@
 package rx.internal;
 
 import org.reactivestreams.Subscriber;
-import rx.Observable;
 
-/**
- * The {@link ObservableSubscriber} wraps a Reactive Streams {@link Subscriber} and allows to subscribe to a Rx
- * {@link Observable}.
- *
- * This implementation properly forwards all emitted events and also handles subscriptions.
- */
-public class ObservableSubscriber<T> extends rx.Subscriber<T> {
+public class RsSubscriberToRxSubscriberAdapter<T> extends rx.Subscriber<T> {
 
-    /**
-     * The wrapped Reactive Streams {@link Subscriber}.
-     */
     private final ManagedSubscription<T> subscription;
 
-    /**
-     * Creates a new {@link ObservableSubscriber}.
-     *
-     * Note that because the Reactive Streams contract requires not sending anything until an explicit request is made,
-     * the {@link #request(long)} call is issued immediately.
-     *
-     * @param rsSubscriber the subscriber to wrap.
-     */
-    public ObservableSubscriber(Subscriber<? super T> rsSubscriber) {
+    public RsSubscriberToRxSubscriberAdapter(Subscriber<? super T> rsSubscriber) {
         // Reactive streams contract requires not sending anything until an explicit request is made
         subscription = new ManagedSubscription<T>(rsSubscriber) {
             @Override
             protected void doRequest(long n) {
-                ObservableSubscriber.this.request(n);
+                RsSubscriberToRxSubscriberAdapter.this.request(n);
             }
 
             @Override

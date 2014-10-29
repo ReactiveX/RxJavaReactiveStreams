@@ -29,8 +29,8 @@ public class SubjectProcessor<T, R> implements Processor<T, R> {
      * @param subject the wrapped {@link Subject}.
      */
     public SubjectProcessor(final Subject<T, R> subject) {
-        this.subscriber = new PublisherSubscriber<T>(Subscribers.from(subject));
-        this.publisher = new ObservablePublisher<R>(subject);
+        this.subscriber = new RxSubscriberToRsSubscriberAdapter<T>(Subscribers.from(subject));
+        this.publisher = new ObservableToPublisherAdapter<R>(subject);
     }
 
     @Override

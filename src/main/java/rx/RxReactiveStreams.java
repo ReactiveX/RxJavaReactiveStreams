@@ -17,10 +17,10 @@ package rx;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-import rx.internal.ObservablePublisher;
-import rx.internal.ObservableSubscriber;
-import rx.internal.PublisherObservableOnSubscribe;
-import rx.internal.PublisherSubscriber;
+import rx.internal.ObservableToPublisherAdapter;
+import rx.internal.PublisherToObservableOnSubscribeAdapter;
+import rx.internal.RsSubscriberToRxSubscriberAdapter;
+import rx.internal.RxSubscriberToRsSubscriberAdapter;
 
 /**
  * The {@link RxReactiveStreams} helper class provides static utility methods to convert to and from
@@ -35,7 +35,7 @@ public class RxReactiveStreams {
      * @return the converted {@link Publisher}.
      */
     public static <T> Publisher<T> toPublisher(Observable<T> observable) {
-        return new ObservablePublisher<T>(observable);
+        return new ObservableToPublisherAdapter<T>(observable);
     }
 
     /**
@@ -45,7 +45,7 @@ public class RxReactiveStreams {
      * @return the converted {@link Observable}.
      */
     public static <T> Observable<T> toObservable(final Publisher<T> publisher) {
-        return Observable.create(new PublisherObservableOnSubscribe<T>(publisher));
+        return Observable.create(new PublisherToObservableOnSubscribeAdapter<T>(publisher));
     }
 
     /**
@@ -55,19 +55,19 @@ public class RxReactiveStreams {
      * @param subscriber the {@link Subscriber} which subscribes.
      */
     public static <T> void subscribe(Observable<T> observable, Subscriber<? super T> subscriber) {
-        ObservableSubscriber<T> subscriberBridge = new ObservableSubscriber<T>(subscriber);
-        observable.subscribe(subscriberBridge);
-        subscriberBridge.postSubscribe();
+        RsSubscriberToRxSubscriberAdapter<T> adapter = new RsSubscriberToRxSubscriberAdapter<T>(subscriber);
+        observable.subscribe(adapter);
+        adapter.postSubscribe();
     }
 
     /**
      * Subscribe to the given {@link Publisher} with a Rx {@link Subscriber}.
      *
-     * @param publisher the {@link Publisher} to subscribe to.
+     * @param publisher  the {@link Publisher} to subscribe to.
      * @param subscriber the {@link rx.Subscriber} which subscribes.
      */
     public static <T> void subscribe(Publisher<T> publisher, rx.Subscriber<? super T> subscriber) {
-        publisher.subscribe(new PublisherSubscriber<T>(subscriber));
+        publisher.subscribe(new RxSubscriberToRsSubscriberAdapter<T>(subscriber));
     }
 
 }

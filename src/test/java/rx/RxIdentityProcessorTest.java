@@ -5,8 +5,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.IdentityProcessorVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-import rx.internal.SubjectProcessor;
-import rx.subjects.PublishSubject;
+import rx.internal.SubjectToProcessorAdapter;
+import rx.subjects.ReplaySubject;
 import rx.test.IterableDecrementer;
 
 @Test
@@ -21,7 +21,7 @@ public class RxIdentityProcessorTest extends IdentityProcessorVerification<Long>
 
     @Override
     public Processor<Long, Long> createIdentityProcessor(int bufferSize) {
-        return new SubjectProcessor<Long, Long>(PublishSubject.<Long>create());
+        return new SubjectToProcessorAdapter<Long, Long>(ReplaySubject.<Long>createWithSize(bufferSize));
     }
 
     @Override

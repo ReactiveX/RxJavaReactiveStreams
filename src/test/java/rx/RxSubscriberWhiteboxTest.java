@@ -56,7 +56,7 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Int
 
     @Override
     public Publisher<Integer> createHelperPublisher(long elements) {
-        return RxReactiveStreams.<Integer>toPublisher(Observable.from(new IterableDecrementer(elements)));
+        return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
 }

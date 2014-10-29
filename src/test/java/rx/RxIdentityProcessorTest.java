@@ -5,7 +5,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.IdentityProcessorVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-
 import rx.internal.SubjectProcessor;
 import rx.subjects.PublishSubject;
 import rx.test.IterableDecrementer;
@@ -22,7 +21,7 @@ public class RxIdentityProcessorTest extends IdentityProcessorVerification<Integ
 
     @Override
     public Processor<Integer, Integer> createIdentityProcessor(int bufferSize) {
-        return new SubjectProcessor<Integer, Integer>(PublishSubject.<Integer> create());
+        return new SubjectProcessor<Integer, Integer>(PublishSubject.<Integer>create());
     }
 
     @Override
@@ -32,12 +31,12 @@ public class RxIdentityProcessorTest extends IdentityProcessorVerification<Integ
 
     @Override
     public Publisher<Integer> createHelperPublisher(long elements) {
-        return RxReactiveStreams.<Integer>toPublisher(Observable.from(new IterableDecrementer(elements)));
+        return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
     @Override
     public Publisher<Integer> createErrorStatePublisher() {
-        return RxReactiveStreams.<Integer>toPublisher(Observable.<Integer> error(new Exception("!")));
+        return RxReactiveStreams.toPublisher(Observable.<Integer>error(new Exception("!")));
     }
 
 }

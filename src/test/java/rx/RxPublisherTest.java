@@ -4,7 +4,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-
 import rx.test.IterableDecrementer;
 
 @Test // needed for Gradle to find this as a test
@@ -24,12 +23,12 @@ public class RxPublisherTest extends PublisherVerification<Integer> {
 
     @Override
     public Publisher<Integer> createPublisher(long elements) {
-        return RxReactiveStreams.<Integer>toPublisher(Observable.from(new IterableDecrementer(elements)));
+        return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
     @Override
     public Publisher<Integer> createErrorStatePublisher() {
-        return RxReactiveStreams.<Integer>toPublisher(Observable.<Integer>error(new Exception("!")));
+        return RxReactiveStreams.toPublisher(Observable.<Integer>error(new Exception("!")));
     }
 
 }

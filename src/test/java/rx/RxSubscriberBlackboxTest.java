@@ -5,7 +5,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-
 import rx.internal.PublisherSubscriber;
 import rx.observers.Subscribers;
 import rx.test.IterableDecrementer;
@@ -26,7 +25,7 @@ public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Int
 
     @Override
     public Publisher<Integer> createHelperPublisher(long elements) {
-        return RxReactiveStreams.<Integer>toPublisher(Observable.from(new IterableDecrementer(elements)));
+        return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
 }

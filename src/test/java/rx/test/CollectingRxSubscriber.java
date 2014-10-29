@@ -23,10 +23,16 @@ import java.util.List;
 public class CollectingRxSubscriber<T> extends Subscriber<T> {
 
     public final List<T> received = new LinkedList<T>();
+    private final long initialRequest;
     public Throwable error;
     public boolean complete;
 
     public CollectingRxSubscriber(long initialRequest) {
+        this.initialRequest = initialRequest;
+    }
+
+    @Override
+    public void onStart() {
         if (initialRequest >= 0) {
             request(initialRequest);
         }

@@ -48,7 +48,7 @@ public class IterableDecrementer implements Iterable<Long> {
 
         @Override
         public boolean hasNext() {
-            return i > 0 || from == Long.MAX_VALUE;
+            return i > 0;
         }
 
         @Override

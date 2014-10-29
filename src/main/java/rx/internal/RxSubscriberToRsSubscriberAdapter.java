@@ -21,9 +21,12 @@ import rx.Producer;
 import rx.functions.Action0;
 import rx.subscriptions.Subscriptions;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class RxSubscriberToRsSubscriberAdapter<T> implements Subscriber<T> {
 
     private final rx.Subscriber<? super T> rxSubscriber;
+    private final AtomicBoolean started = new AtomicBoolean();
 
     public RxSubscriberToRsSubscriberAdapter(rx.Subscriber<? super T> rxSubscriber) {
         this.rxSubscriber = rxSubscriber;
@@ -31,19 +34,23 @@ public class RxSubscriberToRsSubscriberAdapter<T> implements Subscriber<T> {
 
     @Override
     public void onSubscribe(final Subscription rsSubscription) {
-        rxSubscriber.setProducer(new Producer() {
-            @Override
-            public void request(long n) {
-                rsSubscription.request(n);
-            }
-        });
-
-        rxSubscriber.add(Subscriptions.create(new Action0() {
-            @Override
-            public void call() {
-                rsSubscription.cancel();
-            }
-        }));
+        if (started.compareAndSet(false, true)) {
+            rxSubscriber.add(Subscriptions.create(new Action0() {
+                @Override
+                public void call() {
+                    rsSubscription.cancel();
+                }
+            }));
+            rxSubscriber.onStart();
+            rxSubscriber.setProducer(new Producer() {
+                @Override
+                public void request(long n) {
+                    rsSubscription.request(n);
+                }
+            });
+        } else {
+            rsSubscription.cancel();
+        }
     }
 
     @Override

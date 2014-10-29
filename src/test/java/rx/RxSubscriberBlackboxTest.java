@@ -20,12 +20,35 @@ public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lon
 
     @Override
     public Subscriber<Long> createSubscriber() {
-        return new RxSubscriberToRsSubscriberAdapter<Long>(Subscribers.empty());
+        return new RxSubscriberToRsSubscriberAdapter<Long>(new rx.Subscriber<Long>() {
+
+            @Override
+            public void onStart() {
+                super.request(1);
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                request(1);
+            }
+        });
     }
 
     @Override
     public Publisher<Long> createHelperPublisher(long elements) {
         return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
+
+
 
 }

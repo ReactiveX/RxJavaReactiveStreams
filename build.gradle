@@ -17,3 +17,9 @@ dependencies {
 test {
     useTestNG()
 }
+
+idea {
+    project {
+        jdkName = "1.6"
+    }
+}

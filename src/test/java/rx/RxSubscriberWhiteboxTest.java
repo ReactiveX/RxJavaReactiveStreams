@@ -6,9 +6,7 @@ import org.reactivestreams.Subscription;
 import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-
 import rx.internal.PublisherSubscriber;
-import rx.observers.EmptyObserver;
 import rx.observers.Subscribers;
 import rx.test.IterableDecrementer;
 
@@ -23,7 +21,7 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Int
 
     @Override
     public Subscriber<Integer> createSubscriber(final WhiteboxSubscriberProbe<Integer> probe) {
-        return new PublisherSubscriber<Integer>(Subscribers.from(new EmptyObserver<Integer>())) {
+        return new PublisherSubscriber<Integer>(Subscribers.empty()) {
             @Override
             public void onSubscribe(final Subscription rsSubscription) {
                 probe.registerOnSubscribe(new SubscriberPuppet() {

@@ -7,7 +7,6 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 import rx.internal.PublisherSubscriber;
-import rx.observers.EmptyObserver;
 import rx.observers.Subscribers;
 import rx.test.IterableDecrementer;
 
@@ -22,7 +21,7 @@ public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Int
 
     @Override
     public Subscriber<Integer> createSubscriber() {
-        return new PublisherSubscriber<Integer>(Subscribers.from(new EmptyObserver<Integer>()));
+        return new PublisherSubscriber<Integer>(Subscribers.empty());
     }
 
     @Override

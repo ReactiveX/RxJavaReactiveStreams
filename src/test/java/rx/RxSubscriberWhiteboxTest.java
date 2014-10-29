@@ -11,7 +11,7 @@ import rx.observers.Subscribers;
 import rx.test.IterableDecrementer;
 
 @Test
-public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Integer> {
+public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Long> {
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
 
@@ -20,8 +20,8 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Int
     }
 
     @Override
-    public Subscriber<Integer> createSubscriber(final WhiteboxSubscriberProbe<Integer> probe) {
-        return new PublisherSubscriber<Integer>(Subscribers.empty()) {
+    public Subscriber<Long> createSubscriber(final WhiteboxSubscriberProbe<Long> probe) {
+        return new PublisherSubscriber<Long>(Subscribers.empty()) {
             @Override
             public void onSubscribe(final Subscription rsSubscription) {
                 probe.registerOnSubscribe(new SubscriberPuppet() {
@@ -38,7 +38,7 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Int
             }
 
             @Override
-            public void onNext(Integer t) {
+            public void onNext(Long t) {
                 probe.registerOnNext(t);
             }
 
@@ -55,7 +55,7 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Int
     }
 
     @Override
-    public Publisher<Integer> createHelperPublisher(long elements) {
+    public Publisher<Long> createHelperPublisher(long elements) {
         return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 

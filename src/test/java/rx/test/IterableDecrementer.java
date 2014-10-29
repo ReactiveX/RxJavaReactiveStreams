@@ -21,7 +21,7 @@ import java.util.Iterator;
  * Iterates from some arbitrary starting value down to 0, or forever if the starting value is
  * Long.MAX_VALUE.
  */
-public class IterableDecrementer implements Iterable<Integer> {
+public class IterableDecrementer implements Iterable<Long> {
 
     private final long from;
 
@@ -38,15 +38,15 @@ public class IterableDecrementer implements Iterable<Integer> {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
-        return new Repeater((int) from);
+    public Iterator<Long> iterator() {
+        return new Repeater(from);
     }
 
-    class Repeater implements Iterator<Integer> {
+    class Repeater implements Iterator<Long> {
 
-        private int i;
+        private long i;
 
-        public Repeater(final int repeats) {
+        public Repeater(long repeats) {
             i = repeats;
         }
 
@@ -56,7 +56,7 @@ public class IterableDecrementer implements Iterable<Integer> {
         }
 
         @Override
-        public Integer next() {
+        public Long next() {
             return --i;
         }
 

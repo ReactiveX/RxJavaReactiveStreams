@@ -10,7 +10,7 @@ import rx.subjects.PublishSubject;
 import rx.test.IterableDecrementer;
 
 @Test
-public class RxIdentityProcessorTest extends IdentityProcessorVerification<Integer> {
+public class RxIdentityProcessorTest extends IdentityProcessorVerification<Long> {
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
     public static final long PUBLISHER_REFERENCE_CLEANUP_TIMEOUT_MILLIS = 1000L;
@@ -20,8 +20,8 @@ public class RxIdentityProcessorTest extends IdentityProcessorVerification<Integ
     }
 
     @Override
-    public Processor<Integer, Integer> createIdentityProcessor(int bufferSize) {
-        return new SubjectProcessor<Integer, Integer>(PublishSubject.<Integer>create());
+    public Processor<Long, Long> createIdentityProcessor(int bufferSize) {
+        return new SubjectProcessor<Long, Long>(PublishSubject.<Long>create());
     }
 
     @Override
@@ -30,13 +30,13 @@ public class RxIdentityProcessorTest extends IdentityProcessorVerification<Integ
     }
 
     @Override
-    public Publisher<Integer> createHelperPublisher(long elements) {
+    public Publisher<Long> createHelperPublisher(long elements) {
         return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
     @Override
-    public Publisher<Integer> createErrorStatePublisher() {
-        return RxReactiveStreams.toPublisher(Observable.<Integer>error(new Exception("!")));
+    public Publisher<Long> createErrorStatePublisher() {
+        return RxReactiveStreams.toPublisher(Observable.<Long>error(new Exception("!")));
     }
 
 }

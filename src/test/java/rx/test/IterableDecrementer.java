@@ -39,16 +39,12 @@ public class IterableDecrementer implements Iterable<Long> {
 
     @Override
     public Iterator<Long> iterator() {
-        return new Repeater(from);
+        return new Repeater();
     }
 
     class Repeater implements Iterator<Long> {
 
-        private long i;
-
-        public Repeater(long repeats) {
-            i = repeats;
-        }
+        private long i = from;
 
         @Override
         public boolean hasNext() {

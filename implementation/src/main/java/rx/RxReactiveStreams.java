@@ -17,10 +17,10 @@ package rx;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-import rx.internal.ObservableToPublisherAdapter;
-import rx.internal.PublisherToObservableOnSubscribeAdapter;
-import rx.internal.RsSubscriberToRxSubscriberAdapter;
-import rx.internal.RxSubscriberToRsSubscriberAdapter;
+import rx.internal.reactivestreams.ObservableToPublisherAdapter;
+import rx.internal.reactivestreams.PublisherToObservableOnSubscribeAdapter;
+import rx.internal.reactivestreams.RsSubscriberToRxSubscriberAdapter;
+import rx.internal.reactivestreams.RxSubscriberToRsSubscriberAdapter;
 
 /**
  * The {@link RxReactiveStreams} helper class provides static utility methods to convert to and from

@@ -20,7 +20,7 @@ import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.IdentityProcessorVerification;
 import org.reactivestreams.tck.TestEnvironment;
-import rx.internal.SubjectToProcessorAdapter;
+import rx.internal.reactivestreams.SubjectToProcessorAdapter;
 import rx.reactivestreams.test.IterableDecrementer;
 import rx.subjects.ReplaySubject;
 

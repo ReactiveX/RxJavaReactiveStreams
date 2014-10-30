@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rx.internal;
+package rx.internal.reactivestreams;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rx.internal;
+package rx.internal.reactivestreams;
 
 import org.reactivestreams.Processor;
 import org.reactivestreams.Subscriber;

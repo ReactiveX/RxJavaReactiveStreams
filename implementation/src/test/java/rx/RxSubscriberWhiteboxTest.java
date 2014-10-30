@@ -21,7 +21,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-import rx.internal.RxSubscriberToRsSubscriberAdapter;
+import rx.internal.reactivestreams.RxSubscriberToRsSubscriberAdapter;
 import rx.reactivestreams.test.IterableDecrementer;
 
 @Test

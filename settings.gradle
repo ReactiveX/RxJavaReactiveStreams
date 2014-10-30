@@ -1,9 +1,8 @@
 rootProject.name = 'rxjava-reactive-streams'
 
-include "rxjava-reactive-streams"
-
-if (System.properties.containsKey("enableExamples")) {
-    if (JavaVersion.current().java8Compatible) {
-        include "examples:ratpack"
-    }
-}
+// Completely disabled because the publishing infrastructure assumed a single project build
+//if (System.properties.containsKey("enableExamples")) {
+//    if (JavaVersion.current().java8Compatible) {
+//        include "examples:ratpack"
+//    }
+//}

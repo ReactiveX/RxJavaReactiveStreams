@@ -20,7 +20,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-import rx.test.IterableDecrementer;
+import rx.reactivestreams.test.IterableDecrementer;
 
 @Test // needed for Gradle to find this as a test
 public class RxPublisherTest extends PublisherVerification<Long> {

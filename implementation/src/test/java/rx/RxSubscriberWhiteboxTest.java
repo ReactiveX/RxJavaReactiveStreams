@@ -22,7 +22,7 @@ import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 import rx.internal.RxSubscriberToRsSubscriberAdapter;
-import rx.test.IterableDecrementer;
+import rx.reactivestreams.test.IterableDecrementer;
 
 @Test
 public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Long> {

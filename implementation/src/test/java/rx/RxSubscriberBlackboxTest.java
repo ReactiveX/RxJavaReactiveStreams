@@ -22,7 +22,7 @@ import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 import rx.internal.RxSubscriberToRsSubscriberAdapter;
-import rx.test.IterableDecrementer;
+import rx.reactivestreams.test.IterableDecrementer;
 
 @Test
 public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Long> {
@@ -63,7 +63,6 @@ public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lon
     public Publisher<Long> createHelperPublisher(long elements) {
         return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
-
 
 
 }

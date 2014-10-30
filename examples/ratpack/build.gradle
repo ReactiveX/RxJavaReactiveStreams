@@ -1,0 +1,29 @@
+
+// Need the snapshot due to RxJava API changes - TODO LD move to stable version when released
+def ratpackVersion = "0.9.10-SNAPSHOT"
+
+repositories {
+    maven { url "http://oss.jfrog.org/oss-snapshot-local" }
+}
+
+dependencies {
+    testCompile project(":implementation")
+    testCompile project(":test-util")
+    testCompile "io.ratpack:ratpack-rx:$ratpackVersion"
+    testCompile "io.ratpack:ratpack-test:$ratpackVersion"
+    testCompile 'junit:junit:4.11'
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+// The implementation builds with Java 1.6 - we need to use Java 8 for Ratpack
+idea {
+    module {
+        jdkName = "1.8"
+        iml.withXml { XmlProvider xml ->
+            node.component.find { it.'@name' == 'NewModuleRootManager' }.@LANGUAGE_LEVEL = "JDK_1_8"
+        }
+    }
+}
+

@@ -45,7 +45,9 @@ public class RxSubscriberToRsSubscriberAdapter<T> implements Subscriber<T> {
             rxSubscriber.setProducer(new Producer() {
                 @Override
                 public void request(long n) {
-                    rsSubscription.request(n);
+                    if (n > 0) {
+                        rsSubscription.request(n);
+                    }
                 }
             });
         } else {

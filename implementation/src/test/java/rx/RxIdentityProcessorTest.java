@@ -21,8 +21,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.IdentityProcessorVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import rx.internal.SubjectToProcessorAdapter;
+import rx.reactivestreams.test.IterableDecrementer;
 import rx.subjects.ReplaySubject;
-import rx.test.IterableDecrementer;
 
 // @Test
 // Above commented out so it's not run as part of the build as it is currently failing

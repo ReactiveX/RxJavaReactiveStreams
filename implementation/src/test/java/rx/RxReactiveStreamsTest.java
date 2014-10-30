@@ -17,9 +17,9 @@ package rx;
 
 import org.reactivestreams.Publisher;
 import org.testng.annotations.Test;
-import rx.test.CollectingRsSubscriber;
-import rx.test.CollectingRxSubscriber;
-import rx.test.IterablePublisher;
+import rx.reactivestreams.test.CollectingRsSubscriber;
+import rx.reactivestreams.test.CollectingRxSubscriber;
+import rx.reactivestreams.test.IterablePublisher;
 
 import java.util.Arrays;
 

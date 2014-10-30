@@ -13,39 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rx.test;
+package rx.reactivestreams.test;
 
-import rx.Subscriber;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class CollectingRxSubscriber<T> extends Subscriber<T> {
-
+public class CollectingRsSubscriber<T> implements Subscriber<T> {
     public final List<T> received = new LinkedList<T>();
-    private final long initialRequest;
+    public Subscription subscription;
     public Throwable error;
     public boolean complete;
 
-    public CollectingRxSubscriber(long initialRequest) {
-        this.initialRequest = initialRequest;
-    }
-
     @Override
-    public void onStart() {
-        if (initialRequest >= 0) {
-            request(initialRequest);
-        }
-    }
-
-    @Override
-    public void onCompleted() {
-        complete = true;
-    }
-
-    @Override
-    public void onError(Throwable e) {
-        error = e;
+    public void onSubscribe(Subscription s) {
+        subscription = s;
     }
 
     @Override
@@ -53,8 +37,13 @@ public class CollectingRxSubscriber<T> extends Subscriber<T> {
         received.add(t);
     }
 
-    public void makeRequest(long n) {
-        request(n);
+    @Override
+    public void onError(Throwable t) {
+        error = t;
     }
 
+    @Override
+    public void onComplete() {
+        complete = true;
+    }
 }

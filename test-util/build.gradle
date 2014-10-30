@@ -1,4 +1,0 @@
-dependencies {
-    compile 'io.reactivex:rxjava:1.0.+'
-    compile 'org.reactivestreams:reactive-streams:0.4.0'
-}

@@ -19,10 +19,6 @@ import java.util.List;
 
 public class RatpackExamples {
 
-    public RatpackExamples() {
-        RxRatpack.initialize();
-    }
-
     private Iterable<Integer> createIntRange(int upper) {
         return ContiguousSet.create(Range.closedOpen(0, upper), DiscreteDomain.integers());
     }

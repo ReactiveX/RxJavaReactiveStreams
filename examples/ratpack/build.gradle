@@ -8,7 +8,6 @@ repositories {
 
 dependencies {
     testCompile project(":rxjava-reactive-streams")
-    testCompile "io.ratpack:ratpack-rx:$ratpackVersion"
     testCompile "io.ratpack:ratpack-test:$ratpackVersion"
     testCompile 'junit:junit:4.11'
 }

@@ -8,14 +8,21 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
 import ratpack.http.ResponseChunks;
-import ratpack.rx.RxRatpack;
+import ratpack.http.client.ReceivedResponse;
+import ratpack.sse.ServerSentEvents;
 import ratpack.stream.Streams;
 import ratpack.test.embed.EmbeddedApp;
+import ratpack.test.http.TestHttpClient;
+import ratpack.websocket.WebSockets;
 import rx.Observable;
 import rx.RxReactiveStreams;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 public class RatpackExamples {
 
@@ -65,6 +72,76 @@ public class RatpackExamples {
 
             Assert.assertEquals(expectedInts, receivedInts);
         });
+    }
+
+    /**
+     * Test streaming Server Sent Events
+     */
+    @Test
+    public void testServerSentEvents() {
+        Iterable<Integer> ints = createIntRange(5);
+
+        EmbeddedApp.fromHandler(ctx -> {
+            Observable<Integer> observable = Observable.from(ints);
+            Publisher<Integer> publisher = RxReactiveStreams.toPublisher(observable);
+
+            ctx.render(
+                ServerSentEvents.serverSentEvents(publisher, e ->
+                        e.event("counter").data("event " + e.getItem())
+                )
+            );
+        }).test(httpClient -> {
+            ReceivedResponse response = httpClient.get();
+            Assert.assertEquals("text/event-stream;charset=UTF-8", response.getHeaders().get("Content-Type"));
+
+            String expectedOutput = Arrays.asList(0, 1, 2, 3, 4)
+                .stream()
+                .map(i -> "event: counter\ndata: event " + i + "\n")
+                .collect(joining("\n"))
+                + "\n";
+
+            Assert.assertEquals(expectedOutput, response.getBody().getText());
+        });
+
+    }
+
+    /**
+     * Test streaming to a Websocket.
+     *
+     * Note: Ratpack doesn't yet support consuming the incoming data as a stream.
+     */
+    @Test
+    public void testWebsocket() {
+        Iterable<Integer> ints = createIntRange(3);
+
+        EmbeddedApp.fromHandler(ctx -> {
+            Observable<String> observable = Observable.from(ints).map(Object::toString);
+            WebSockets.websocketBroadcast(ctx, RxReactiveStreams.toPublisher(observable));
+        }).test(httpClient -> {
+            URI wsAddress = getWsAddress(httpClient);
+            RecordingWebSocketClient wsClient = new RecordingWebSocketClient(wsAddress);
+
+            try {
+                Assert.assertTrue(wsClient.connectBlocking());
+                Assert.assertEquals("0", wsClient.next());
+                Assert.assertEquals("1", wsClient.next());
+                Assert.assertEquals("2", wsClient.next());
+                wsClient.waitForClose();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private URI getWsAddress(TestHttpClient httpClient) {
+        URI httpAddress = httpClient.getApplicationUnderTest().getAddress();
+        URI wsAddress;
+        try {
+            wsAddress = new URI("ws", null, httpAddress.getHost(), httpAddress.getPort(), httpAddress.getPath(), null, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        return wsAddress;
     }
 
 }

@@ -1,10 +1,6 @@
 
 // Need the snapshot due to RxJava API changes - TODO LD move to stable version when released
-def ratpackVersion = "0.9.10-SNAPSHOT"
-
-repositories {
-    maven { url "http://oss.jfrog.org/oss-snapshot-local" }
-}
+def ratpackVersion = "0.9.10"
 
 dependencies {
     testCompile project(":rxjava-reactive-streams")

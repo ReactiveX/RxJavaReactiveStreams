@@ -3,18 +3,14 @@ buildscript {
     dependencies { classpath 'com.netflix.nebula:gradle-rxjava-project-plugin:1.12.+' }
 }
 
-apply plugin: 'rxjava-project'
-
-description = "Adapter between RxJava and ReactiveStreams"
-
-dependencies {
-    compile 'io.reactivex:rxjava:1.0.+'
-    compile 'org.reactivestreams:reactive-streams:0.4.0'
-    testCompile 'org.reactivestreams:reactive-streams-tck:0.4.0'
+allprojects {
+    apply plugin: 'rxjava-project'
 }
 
-test {
-    useTestNG()
+project(":examples") {
+    allprojects {
+        bintrayUpload.enabled = false
+    }
 }
 
 idea {

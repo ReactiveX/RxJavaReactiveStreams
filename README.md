@@ -13,13 +13,9 @@ import org.reactivestreams.Publisher;
 
 public abstract class RxReactiveStreams {
 
-    public static <T> Publisher<T> toPublisher(Observable<T> observable) {
-      // …
-    }
+    public static <T> Publisher<T> toPublisher(Observable<T> observable) { … }
 
-    public static <T> Observable<T> toObservable(Publisher<T> publisher) {
-      // …
-    }
+    public static <T> Observable<T> toObservable(Publisher<T> publisher) { … }
 
 }
 ```

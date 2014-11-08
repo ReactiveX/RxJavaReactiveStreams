@@ -6,7 +6,7 @@ This library allows RxJava to interoperate with other implementors of the Reacti
 
 It provides the following API:
 
-```lang-java
+```java
 package rx;
 
 import org.reactivestreams.Publisher;

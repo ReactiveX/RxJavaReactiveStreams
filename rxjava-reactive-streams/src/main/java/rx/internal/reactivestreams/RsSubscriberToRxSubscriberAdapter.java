@@ -18,20 +18,23 @@ package rx.internal.reactivestreams;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import rx.Observable;
+import rx.functions.Action0;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class RsSubscriberToRxSubscriberAdapter<T> extends rx.Subscriber<T> {
 
     private final Subscriber<? super T> rsSubscriber;
+    private final AtomicBoolean done = new AtomicBoolean();
+    private final Action0 onDone;
 
-    public static <T> void adapt(Observable<T> observable, Subscriber<? super T> subscriber) {
-        observable.serialize().subscribe(new RsSubscriberToRxSubscriberAdapter<T>(subscriber));
+    public static <T> void adapt(Observable<T> observable, Subscriber<? super T> subscriber, Action0 onDone) {
+        observable.serialize().subscribe(new RsSubscriberToRxSubscriberAdapter<T>(subscriber, onDone));
     }
 
-    private RsSubscriberToRxSubscriberAdapter(Subscriber<? super T> rsSubscriber) {
+    private RsSubscriberToRxSubscriberAdapter(Subscriber<? super T> rsSubscriber, Action0 onDone) {
         this.rsSubscriber = rsSubscriber;
+        this.onDone = onDone;
     }
 
     @Override
@@ -51,11 +54,18 @@ public class RsSubscriberToRxSubscriberAdapter<T> extends rx.Subscriber<T> {
             @Override
             public void cancel() {
                 unsubscribe();
+                fireDone();
             }
         });
 
         if (!requested.get()) {
             request(0);
+        }
+    }
+
+    private void fireDone() {
+        if (done.compareAndSet(false, true)) {
+            onDone.call();
         }
     }
 
@@ -67,10 +77,12 @@ public class RsSubscriberToRxSubscriberAdapter<T> extends rx.Subscriber<T> {
     @Override
     public void onError(Throwable e) {
         rsSubscriber.onError(e);
+        fireDone();
     }
 
     @Override
     public void onNext(T t) {
         rsSubscriber.onNext(t);
+        fireDone();
     }
 }

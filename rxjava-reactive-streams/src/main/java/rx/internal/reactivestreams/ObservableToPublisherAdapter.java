@@ -17,8 +17,8 @@ package rx.internal.reactivestreams;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import rx.Observable;
+import rx.functions.Action0;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,36 +36,10 @@ public class ObservableToPublisherAdapter<T> implements Publisher<T> {
     @Override
     public void subscribe(final Subscriber<? super T> s) {
         if (subscribers.add(s)) {
-            RsSubscriberToRxSubscriberAdapter.adapt(observable, new Subscriber<T>() {
+            RsSubscriberToRxSubscriberAdapter.adapt(observable, s, new Action0() {
                 @Override
-                public void onSubscribe(final Subscription subscription) {
-                    s.onSubscribe(new Subscription() {
-                        @Override
-                        public void request(long n) {
-                            subscription.request(n);
-                        }
-
-                        @Override
-                        public void cancel() {
-                            subscribers.remove(s);
-                            subscription.cancel();
-                        }
-                    });
-                }
-
-                @Override
-                public void onNext(T t) {
-                    s.onNext(t);
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    s.onError(t);
-                }
-
-                @Override
-                public void onComplete() {
-                    s.onComplete();
+                public void call() {
+                    subscribers.remove(s);
                 }
             });
         } else {

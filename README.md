@@ -6,7 +6,7 @@ This library allows RxJava to interoperate with other implementors of the Reacti
 
 It provides the following API:
 
-```language-java
+```lang-java
 package rx;
 
 import org.reactivestreams.Publisher;
@@ -14,11 +14,11 @@ import org.reactivestreams.Publisher;
 public abstract class RxReactiveStreams {
 
     public static <T> Publisher<T> toPublisher(Observable<T> observable) {
-        …
+      // …
     }
 
     public static <T> Observable<T> toObservable(Publisher<T> publisher) {
-      …
+      // …
     }
 
 }

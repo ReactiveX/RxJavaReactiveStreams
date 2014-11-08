@@ -23,12 +23,12 @@ import rx.subscriptions.Subscriptions;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class RxSubscriberToRsSubscriberAdapter<T> implements Subscriber<T> {
+public class SubscriberAdapter<T> implements Subscriber<T> {
 
     private final rx.Subscriber<? super T> rxSubscriber;
     private final AtomicBoolean started = new AtomicBoolean();
 
-    public RxSubscriberToRsSubscriberAdapter(rx.Subscriber<? super T> rxSubscriber) {
+    public SubscriberAdapter(rx.Subscriber<? super T> rxSubscriber) {
         this.rxSubscriber = rxSubscriber;
     }
 

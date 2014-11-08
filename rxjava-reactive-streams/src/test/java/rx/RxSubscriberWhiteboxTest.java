@@ -18,11 +18,14 @@ package rx;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-import rx.internal.reactivestreams.RxSubscriberToRsSubscriberAdapter;
+import rx.internal.reactivestreams.SubscriberAdapter;
 import rx.reactivestreams.test.IterableDecrementer;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Test
 public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Long> {
@@ -33,40 +36,74 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Lon
         super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS));
     }
 
+    private static class IgnoreSubscriber<T> extends rx.Subscriber<T> {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(T t) {
+
+        }
+    }
+
     @Override
     public Subscriber<Long> createSubscriber(final WhiteboxSubscriberProbe<Long> probe) {
-        return new RxSubscriberToRsSubscriberAdapter<Long>(new rx.Subscriber<Long>() {
-
+        return new SubscriberAdapter<Long>(new IgnoreSubscriber<Long>()) {
             @Override
-            public void onStart() {
-                probe.registerOnSubscribe(new SubscriberPuppet() {
+            public void onSubscribe(final Subscription rsSubscription) {
+                final AtomicBoolean cancelled = new AtomicBoolean();
+                super.onSubscribe(new Subscription() {
                     @Override
-                    public void triggerRequest(long elements) {
-                        request(elements);
+                    public void request(long n) {
+                        rsSubscription.request(n);
                     }
 
                     @Override
-                    public void signalCancel() {
-                        unsubscribe();
+                    public void cancel() {
+                        cancelled.set(true);
+                        rsSubscription.cancel();
                     }
                 });
+                if (!cancelled.get()) {
+                    probe.registerOnSubscribe(new SubscriberPuppet() {
+                        @Override
+                        public void triggerRequest(long elements) {
+                            rsSubscription.request(elements);
+                        }
+
+                        @Override
+                        public void signalCancel() {
+                            rsSubscription.cancel();
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onNext(Long t) {
-                probe.registerOnNext(t);
+            public void onNext(Long aLong) {
+                probe.registerOnNext(aLong);
+                super.onNext(aLong);
             }
 
             @Override
             public void onError(Throwable t) {
                 probe.registerOnError(t);
+                super.onError(t);
             }
 
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 probe.registerOnComplete();
+                super.onComplete();
             }
-        });
+        };
     }
 
     @Override
@@ -74,18 +111,17 @@ public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Lon
         return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
-    @Override
     public void spec309_callingRequestWithNegativeNumberMustThrow() throws Throwable {
-        notVerified(); // nonsense test, should be a publisher test
+        notVerified(); // nonsense test, subscriber doesn't create any Subscription implementations
     }
 
     @Override
     public void spec309_callingRequestZeroMustThrow() throws Throwable {
-        notVerified(); // nonsense test, should be a publisher test
+        notVerified(); // nonsense test, subscriber doesn't create any Subscription implementations
     }
 
     @Override
     public void spec317_mustSignalOnErrorWhenPendingAboveLongMaxValue() throws Throwable {
-        notVerified(); // nonsense test, should be a publisher test
+        notVerified(); // nonsense test, the publisher should implement this
     }
 }

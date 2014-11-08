@@ -34,7 +34,7 @@ public class RxPublisherTest extends PublisherVerification<Long> {
 
     @Override
     public long maxElementsFromPublisher() {
-        return Integer.MAX_VALUE;
+        return Long.MAX_VALUE;
     }
 
     @Override

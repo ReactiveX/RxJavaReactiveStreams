@@ -16,8 +16,8 @@
 package rx;
 
 import org.reactivestreams.Publisher;
-import rx.internal.reactivestreams.ObservableToPublisherAdapter;
-import rx.internal.reactivestreams.RxSubscriberToRsSubscriberAdapter;
+import rx.internal.reactivestreams.PublisherAdapter;
+import rx.internal.reactivestreams.SubscriberAdapter;
 
 /**
  * This type provides static factory methods for converting to and from RxJava types and Reactive Streams types.
@@ -40,7 +40,7 @@ public abstract class RxReactiveStreams {
      * @return the converted {@link Publisher}
      */
     public static <T> Publisher<T> toPublisher(Observable<T> observable) {
-        return new ObservableToPublisherAdapter<T>(observable);
+        return new PublisherAdapter<T>(observable);
     }
 
     /**
@@ -55,7 +55,7 @@ public abstract class RxReactiveStreams {
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(final rx.Subscriber<? super T> rxSubscriber) {
-                publisher.subscribe(new RxSubscriberToRsSubscriberAdapter<T>(rxSubscriber));
+                publisher.subscribe(new SubscriberAdapter<T>(rxSubscriber));
             }
         });
     }

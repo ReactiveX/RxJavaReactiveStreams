@@ -21,7 +21,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
-import rx.internal.reactivestreams.RxSubscriberToRsSubscriberAdapter;
+import rx.internal.reactivestreams.SubscriberAdapter;
 import rx.reactivestreams.test.IterableDecrementer;
 
 @Test
@@ -35,7 +35,7 @@ public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lon
 
     @Override
     public Subscriber<Long> createSubscriber() {
-        return new RxSubscriberToRsSubscriberAdapter<Long>(new rx.Subscriber<Long>() {
+        return new SubscriberAdapter<Long>(new rx.Subscriber<Long>() {
 
             @Override
             public void onStart() {

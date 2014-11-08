@@ -55,9 +55,7 @@ public class RxReactiveStreams {
      * @param subscriber the {@link Subscriber} which subscribes.
      */
     public static <T> void subscribe(Observable<T> observable, Subscriber<? super T> subscriber) {
-        RsSubscriberToRxSubscriberAdapter<T> adapter = new RsSubscriberToRxSubscriberAdapter<T>(subscriber);
-        observable.subscribe(adapter);
-        adapter.postSubscribe();
+        RsSubscriberToRxSubscriberAdapter.adapt(observable, subscriber);
     }
 
     /**

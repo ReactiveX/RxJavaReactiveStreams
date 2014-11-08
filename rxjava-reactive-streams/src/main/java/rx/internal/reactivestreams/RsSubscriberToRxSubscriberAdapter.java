@@ -16,47 +16,62 @@
 package rx.internal.reactivestreams;
 
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import rx.Observable;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RsSubscriberToRxSubscriberAdapter<T> extends rx.Subscriber<T> {
 
-    private final ManagedSubscription<T> subscription;
+    private final Subscriber<? super T> rsSubscriber;
 
-    public RsSubscriberToRxSubscriberAdapter(Subscriber<? super T> rsSubscriber) {
-        // Reactive streams contract requires not sending anything until an explicit request is made
-        subscription = new ManagedSubscription<T>(rsSubscriber) {
-            @Override
-            protected void doRequest(long n) {
-                RsSubscriberToRxSubscriberAdapter.this.request(n);
-            }
 
-            @Override
-            protected void doCancel() {
-                unsubscribe();
-            }
-        };
+    public static <T> void adapt(Observable<T> observable, Subscriber<? super T> subscriber) {
+        observable.serialize().subscribe(new RsSubscriberToRxSubscriberAdapter<T>(subscriber));
     }
 
-    public void postSubscribe() {
-        subscription.start();
+    private RsSubscriberToRxSubscriberAdapter(Subscriber<? super T> rsSubscriber) {
+        this.rsSubscriber = rsSubscriber;
     }
 
     @Override
     public void onStart() {
-        request(0);
+        final AtomicBoolean requested = new AtomicBoolean();
+        rsSubscriber.onSubscribe(new Subscription() {
+            @Override
+            public void request(long n) {
+                if (n < 1) {
+                    throw new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0.");
+                }
+
+                requested.set(true);
+                RsSubscriberToRxSubscriberAdapter.this.request(n);
+            }
+
+            @Override
+            public void cancel() {
+                unsubscribe();
+            }
+        });
+
+        if (!requested.get()) {
+            request(0);
+        }
     }
 
     @Override
     public void onCompleted() {
-        subscription.onComplete();
+        rsSubscriber.onComplete();
     }
 
     @Override
     public void onError(Throwable e) {
-        subscription.onError(e);
+        rsSubscriber.onError(e);
     }
 
     @Override
     public void onNext(T t) {
-        subscription.onNext(t);
+        rsSubscriber.onNext(t);
     }
 }

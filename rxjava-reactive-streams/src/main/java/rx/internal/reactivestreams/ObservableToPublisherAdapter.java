@@ -19,7 +19,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import rx.Observable;
-import rx.RxReactiveStreams;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +36,7 @@ public class ObservableToPublisherAdapter<T> implements Publisher<T> {
     @Override
     public void subscribe(final Subscriber<? super T> s) {
         if (subscribers.add(s)) {
-            RxReactiveStreams.subscribe(observable, new Subscriber<T>() {
+            RsSubscriberToRxSubscriberAdapter.adapt(observable, new Subscriber<T>() {
                 @Override
                 public void onSubscribe(final Subscription subscription) {
                     s.onSubscribe(new Subscription() {

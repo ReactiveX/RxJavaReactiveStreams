@@ -16,23 +16,28 @@
 package rx;
 
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import rx.internal.reactivestreams.ObservableToPublisherAdapter;
-import rx.internal.reactivestreams.PublisherToObservableOnSubscribeAdapter;
-import rx.internal.reactivestreams.RsSubscriberToRxSubscriberAdapter;
 import rx.internal.reactivestreams.RxSubscriberToRsSubscriberAdapter;
 
 /**
- * The {@link RxReactiveStreams} helper class provides static utility methods to convert to and from
- * {@link Observable}s and {@link Publisher}s.
+ * This type provides static factory methods for converting to and from RxJava types and Reactive Streams types.
+ * <p/>
+ * The <a href="http://www.reactive-streams.org">Reactive Streams</a> API provides a common API for interoperability
+ * between different reactive streaming libraries, of which RxJava is one.
+ * Using the methods of this class, RxJava can collaborate with other such libraries that also implement the standard.
  */
-public class RxReactiveStreams {
+public abstract class RxReactiveStreams {
+
+    private RxReactiveStreams() {
+    }
 
     /**
      * Convert a Rx {@link Observable} into a Reactive Streams {@link Publisher}.
+     * <p/>
+     * Use this method when you have an RxJava observable, that you want to be consumed by another library.
      *
-     * @param observable the {@link Observable} to convert.
-     * @return the converted {@link Publisher}.
+     * @param observable the {@link Observable} to convert
+     * @return the converted {@link Publisher}
      */
     public static <T> Publisher<T> toPublisher(Observable<T> observable) {
         return new ObservableToPublisherAdapter<T>(observable);
@@ -40,32 +45,19 @@ public class RxReactiveStreams {
 
     /**
      * Convert a Reactive Streams {@link Publisher} into a Rx {@link Observable}.
+     * <p/>
+     * Use this method when you have a stream from another library, that you want to be consume as an RxJava observable.
      *
      * @param publisher the {@link Publisher} to convert.
-     * @return the converted {@link Observable}.
+     * @return the converted {@link Observable}
      */
     public static <T> Observable<T> toObservable(final Publisher<T> publisher) {
-        return Observable.create(new PublisherToObservableOnSubscribeAdapter<T>(publisher));
-    }
-
-    /**
-     * Subscribe to the given Rx {@link Observable} with a Reactive Streams {@link Subscriber}.
-     *
-     * @param observable the {@link Observable} to subscribe to.
-     * @param subscriber the {@link Subscriber} which subscribes.
-     */
-    public static <T> void subscribe(Observable<T> observable, Subscriber<? super T> subscriber) {
-        RsSubscriberToRxSubscriberAdapter.adapt(observable, subscriber);
-    }
-
-    /**
-     * Subscribe to the given {@link Publisher} with a Rx {@link Subscriber}.
-     *
-     * @param publisher  the {@link Publisher} to subscribe to.
-     * @param subscriber the {@link rx.Subscriber} which subscribes.
-     */
-    public static <T> void subscribe(Publisher<T> publisher, rx.Subscriber<? super T> subscriber) {
-        publisher.subscribe(new RxSubscriberToRsSubscriberAdapter<T>(subscriber));
+        return Observable.create(new Observable.OnSubscribe<T>() {
+            @Override
+            public void call(final rx.Subscriber<? super T> rxSubscriber) {
+                publisher.subscribe(new RxSubscriberToRsSubscriberAdapter<T>(rxSubscriber));
+            }
+        });
     }
 
 }

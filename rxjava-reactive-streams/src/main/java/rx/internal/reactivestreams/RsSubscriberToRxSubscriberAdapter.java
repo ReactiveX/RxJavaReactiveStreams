@@ -26,7 +26,6 @@ public class RsSubscriberToRxSubscriberAdapter<T> extends rx.Subscriber<T> {
 
     private final Subscriber<? super T> rsSubscriber;
 
-
     public static <T> void adapt(Observable<T> observable, Subscriber<? super T> subscriber) {
         observable.serialize().subscribe(new RsSubscriberToRxSubscriberAdapter<T>(subscriber));
     }

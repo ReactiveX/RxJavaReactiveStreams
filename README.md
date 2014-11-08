@@ -1,7 +1,7 @@
 # RxJava Reactive Streams
 
 This library provides adapters between RxJava and [Reactive Streams](http://www.reactive-streams.org).
-The Reactive Streams standard defines an API and runtime semantics for reactive data streams, that other tools can implement in order to interoperate with other tools.
+The Reactive Streams standard defines an API and runtime semantics for reactive data streams, that different tools can implement in order to interoperate with each other.
 This library allows RxJava to interoperate with other implementors of the Reactive Streams API.
 
 It provides the following API:

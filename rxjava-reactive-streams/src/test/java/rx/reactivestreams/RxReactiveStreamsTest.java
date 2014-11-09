@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rx;
+package rx.reactivestreams;
 
 import org.reactivestreams.Publisher;
 import org.testng.annotations.Test;
+import rx.Observable;
+import rx.RxReactiveStreams;
 import rx.reactivestreams.test.CollectingRsSubscriber;
 import rx.reactivestreams.test.CollectingRxSubscriber;
 import rx.reactivestreams.test.IterablePublisher;

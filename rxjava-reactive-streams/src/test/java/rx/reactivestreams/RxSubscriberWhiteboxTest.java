@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rx;
+package rx.reactivestreams;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -22,6 +22,8 @@ import org.reactivestreams.Subscription;
 import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
+import rx.Observable;
+import rx.RxReactiveStreams;
 import rx.internal.reactivestreams.SubscriberAdapter;
 import rx.reactivestreams.test.IterableDecrementer;
 

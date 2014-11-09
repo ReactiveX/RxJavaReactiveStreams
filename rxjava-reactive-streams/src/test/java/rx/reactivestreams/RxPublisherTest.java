@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package rx;
+package rx.reactivestreams;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
+import rx.Observable;
+import rx.RxReactiveStreams;
 import rx.reactivestreams.test.IterableDecrementer;
 
 @Test // needed for Gradle to find this as a test

@@ -30,11 +30,11 @@ import rx.reactivestreams.test.IterableDecrementer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Test
-public class RxSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Long> {
+public class TckSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Long> {
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
 
-    protected RxSubscriberWhiteboxTest() {
+    protected TckSubscriberWhiteboxTest() {
         super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS));
     }
 

@@ -17,54 +17,39 @@
 package rx.reactivestreams;
 
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.tck.SubscriberBlackboxVerification;
+import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 import rx.Observable;
 import rx.RxReactiveStreams;
-import rx.internal.reactivestreams.SubscriberAdapter;
 import rx.reactivestreams.test.IterableDecrementer;
 
 @Test
-public class RxSubscriberBlackboxTest extends SubscriberBlackboxVerification<Long> {
+public class TckPublisherTest extends PublisherVerification<Long> {
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
+    public static final long PUBLISHER_REFERENCE_CLEANUP_TIMEOUT_MILLIS = 1000L;
 
-    protected RxSubscriberBlackboxTest() {
-        super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS));
+    public TckPublisherTest() {
+        super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS), PUBLISHER_REFERENCE_CLEANUP_TIMEOUT_MILLIS);
     }
 
     @Override
-    public Subscriber<Long> createSubscriber() {
-        return new SubscriberAdapter<Long>(new rx.Subscriber<Long>() {
-
-            @Override
-            public void onStart() {
-                super.request(1);
-            }
-
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Long aLong) {
-                request(1);
-            }
-        });
+    public long maxElementsFromPublisher() {
+        return Long.MAX_VALUE;
     }
 
     @Override
-    public Publisher<Long> createHelperPublisher(long elements) {
+    public Publisher<Long> createPublisher(long elements) {
         return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
     }
 
+    @Override
+    public Publisher<Long> createErrorStatePublisher() {
+        // Null because we always successfully subscribe.
+        // If the observable is in error state, it will subscribe and then emit the error as the first item
+        // This is not an “error state” publisher as defined by RS
+        return null;
+    }
 
 }

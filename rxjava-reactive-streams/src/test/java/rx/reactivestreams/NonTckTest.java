@@ -29,7 +29,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-public class RxReactiveStreamsTest {
+public class NonTckTest {
 
     @Test
     public void canSubscribeToObservableAsPublisher() {

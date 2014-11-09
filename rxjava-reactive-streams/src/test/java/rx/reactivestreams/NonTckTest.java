@@ -15,30 +15,39 @@
  */
 package rx.reactivestreams;
 
+import com.google.common.util.concurrent.Monitor;
 import org.reactivestreams.Publisher;
 import org.testng.annotations.Test;
 import rx.Observable;
-import rx.RxReactiveStreams;
 import rx.Subscriber;
+import rx.reactivestreams.test.IterablePublisher;
 import rx.reactivestreams.test.RsSubscriber;
 import rx.reactivestreams.test.RxSubscriber;
-import rx.reactivestreams.test.IterablePublisher;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 import static rx.RxReactiveStreams.toObservable;
 import static rx.RxReactiveStreams.toPublisher;
 
 public class NonTckTest {
 
+    private <T> RsSubscriber<T> subscribe(Observable<T> observable) {
+        return subscribe(toPublisher(observable));
+    }
+
+    private <T> RsSubscriber<T> subscribe(Publisher<T> publisher) {
+        RsSubscriber<T> subscriber = new RsSubscriber<T>();
+        publisher.subscribe(subscriber);
+        return subscriber;
+    }
+
     @Test
     public void canSubscribeToObservableAsPublisher() {
-        Observable<Integer> observable = Observable.just(1, 2, 3);
-        Publisher<Integer> publisher = toPublisher(observable);
-        RsSubscriber<Integer> subscriber = new RsSubscriber<Integer>();
-        publisher.subscribe(subscriber);
+        RsSubscriber<Integer> subscriber = subscribe(Observable.just(1, 2, 3));
 
         assertEquals("no items sent", 0, subscriber.received.size());
         subscriber.subscription.request(1);
@@ -66,7 +75,7 @@ public class NonTckTest {
     }
 
     @Test
-    public void rxSubscriberNotMakingInitialRequestConumesPublisher() {
+    public void rxSubscriberNotMakingInitialRequestConsumesPublisher() {
         Publisher<Integer> publisher = new IterablePublisher<Integer>(Arrays.asList(1, 2, 3));
         Observable<Integer> observable = toObservable(publisher);
         RxSubscriber<Integer> subscriber = new RxSubscriber<Integer>(-1); // -1 means no initial request
@@ -77,9 +86,9 @@ public class NonTckTest {
         assertNull(subscriber.error);
     }
 
-    @Test void errorStatePublisherSendsSingleErrorPostSubscribe() {
-        RsSubscriber<Integer> subscriber = new RsSubscriber<Integer>();
-        toPublisher(Observable.<Integer>error(new RuntimeException("!"))).subscribe(subscriber);
+    @Test
+    void errorStatePublisherSendsSingleErrorPostSubscribe() {
+        RsSubscriber<Integer> subscriber = subscribe(Observable.<Integer>error(new RuntimeException("!")));
 
         // An error state observable always allows subscription, but then immediately sends onError.
         // The spec suggests not trying to subscribe but immediately firing onError without an onSubscribe.
@@ -91,16 +100,14 @@ public class NonTckTest {
         assertEquals(subscriber.error.getMessage(), "!");
     }
 
-    @Test void rxFailingOnSubscribeSendsSingleErrorPostSubscribe() {
-        RsSubscriber<Integer> subscriber = new RsSubscriber<Integer>();
-        Observable<Integer> error = Observable.create(new Observable.OnSubscribe<Integer>() {
+    @Test
+    void rxFailingOnSubscribeSendsSingleErrorPostSubscribe() {
+        RsSubscriber<Integer> subscriber = subscribe(Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 throw new RuntimeException("!");
             }
-        });
-
-        toPublisher(error).subscribe(subscriber);
+        }));
 
         // An error state observable always allows subscription, but then immediately sends onError.
         // The spec suggests not trying to subscribe but immediately firing onError without an onSubscribe.
@@ -110,6 +117,26 @@ public class NonTckTest {
         assertFalse(subscriber.complete);
         assertEquals(subscriber.error.getClass(), RuntimeException.class);
         assertEquals(subscriber.error.getMessage(), "!");
+    }
+
+    @Test(enabled = false)
+    void subscribingToHotObservableWithNoBackpressureStrategy() throws InterruptedException {
+        final RsSubscriber<Long> subscriber = subscribe(Observable.interval(1, TimeUnit.NANOSECONDS));
+        Monitor monitor = new Monitor();
+        monitor.enter();
+        try {
+            monitor.waitFor(new Monitor.Guard(monitor) {
+                @Override
+                public boolean isSatisfied() {
+                    return subscriber.received.size() > 1 || subscriber.error != null;
+                }
+            });
+
+            assertEquals(subscriber.received.size(), 0);
+            assertNotNull(subscriber.error);
+        } finally {
+            monitor.leave();
+        }
     }
 
 }

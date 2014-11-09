@@ -3,6 +3,7 @@ description = "Adapter between RxJava and ReactiveStreams"
 dependencies {
     compile 'io.reactivex:rxjava:1.0.+'
     compile 'org.reactivestreams:reactive-streams:0.4.0'
+    testCompile 'com.google.guava:guava:18.0'
     testCompile 'org.reactivestreams:reactive-streams-tck:0.4.0'
 }
 

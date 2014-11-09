@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 import rx.Observable;
 import rx.RxReactiveStreams;
 import rx.internal.reactivestreams.SubscriberAdapter;
-import rx.reactivestreams.test.IterableDecrementer;
+import rx.reactivestreams.test.CountdownIterable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -110,7 +110,7 @@ public class TckSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Lo
 
     @Override
     public Publisher<Long> createHelperPublisher(long elements) {
-        return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
+        return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
     }
 
     public void spec309_callingRequestWithNegativeNumberMustThrow() throws Throwable {

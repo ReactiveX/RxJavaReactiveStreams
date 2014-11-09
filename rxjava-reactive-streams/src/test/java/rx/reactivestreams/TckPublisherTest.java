@@ -22,7 +22,7 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 import rx.Observable;
 import rx.RxReactiveStreams;
-import rx.reactivestreams.test.IterableDecrementer;
+import rx.reactivestreams.test.CountdownIterable;
 
 @Test
 public class TckPublisherTest extends PublisherVerification<Long> {
@@ -41,7 +41,7 @@ public class TckPublisherTest extends PublisherVerification<Long> {
 
     @Override
     public Publisher<Long> createPublisher(long elements) {
-        return RxReactiveStreams.toPublisher(Observable.from(new IterableDecrementer(elements)));
+        return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
     }
 
     @Override

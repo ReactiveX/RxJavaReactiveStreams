@@ -17,20 +17,11 @@ package rx.reactivestreams.test;
 
 import java.util.Iterator;
 
-/**
- * Iterates from some arbitrary starting value down to 0, or forever if the starting value is
- * Long.MAX_VALUE.
- */
-public class IterableDecrementer implements Iterable<Long> {
+public class CountdownIterable implements Iterable<Long> {
 
     private final long from;
 
-    /**
-     * Creates new {@link IterableDecrementer}.
-     *
-     * @param from the value to start from. If equal to Long.MAX_VALUE, iteration never stops.
-     */
-    public IterableDecrementer(final long from) {
+    public CountdownIterable(final long from) {
         if (from < 0) {
             throw new IllegalArgumentException("from < 0");
         }
@@ -39,27 +30,24 @@ public class IterableDecrementer implements Iterable<Long> {
 
     @Override
     public Iterator<Long> iterator() {
-        return new Repeater();
+        return new Iterator<Long>() {
+            private long i = from;
+
+            @Override
+            public boolean hasNext() {
+                return i > 0;
+            }
+
+            @Override
+            public Long next() {
+                return --i;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
-    class Repeater implements Iterator<Long> {
-
-        private long i = from;
-
-        @Override
-        public boolean hasNext() {
-            return i > 0;
-        }
-
-        @Override
-        public Long next() {
-            return --i;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-    }
 }

@@ -15,7 +15,6 @@
  */
 package rx.reactivestreams;
 
-import com.google.common.util.concurrent.Monitor;
 import org.reactivestreams.Publisher;
 import org.testng.annotations.Test;
 import rx.Observable;
@@ -119,24 +118,31 @@ public class NonTckTest {
         assertEquals(subscriber.error.getMessage(), "!");
     }
 
-    @Test(enabled = false)
+    @Test(enabled = false) // failing
     void subscribingToHotObservableWithNoBackpressureStrategy() throws InterruptedException {
-        final RsSubscriber<Long> subscriber = subscribe(Observable.interval(1, TimeUnit.NANOSECONDS));
-        Monitor monitor = new Monitor();
-        monitor.enter();
-        try {
-            monitor.waitFor(new Monitor.Guard(monitor) {
-                @Override
-                public boolean isSatisfied() {
-                    return subscriber.received.size() > 1 || subscriber.error != null;
-                }
-            });
+        RsSubscriber<Long> subscriber = subscribe(Observable.interval(1, TimeUnit.NANOSECONDS));
 
-            assertEquals(subscriber.received.size(), 0);
-            assertNotNull(subscriber.error);
-        } finally {
-            monitor.leave();
-        }
+        // Long enough for the observable to fire if it's going to
+        Thread.sleep(10);
+        assertEquals(subscriber.received.size(), 0); // fails, data is coming through before being requested
+    }
+
+    @Test
+    void subscribingToHotObservableWithBackpressureStrategy() throws InterruptedException {
+        Observable<Long> observable = Observable.interval(1, TimeUnit.NANOSECONDS).onBackpressureDrop();
+        RsSubscriber<Long> subscriber = subscribe(observable);
+
+        subscriber.subscription.request(1);
+        subscriber.waitForNumItems(1);
+        assertEquals(subscriber.received.size(), 1);
+        assertNull(subscriber.error);
+
+        subscriber.subscription.request(10);
+        subscriber.waitForNumItems(11);
+        assertEquals(subscriber.received.size(), 11);
+        assertNull(subscriber.error);
+
+        subscriber.subscription.cancel();
     }
 
 }

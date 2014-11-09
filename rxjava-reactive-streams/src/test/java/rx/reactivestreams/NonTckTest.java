@@ -19,8 +19,8 @@ import org.reactivestreams.Publisher;
 import org.testng.annotations.Test;
 import rx.Observable;
 import rx.RxReactiveStreams;
-import rx.reactivestreams.test.CollectingRsSubscriber;
-import rx.reactivestreams.test.CollectingRxSubscriber;
+import rx.reactivestreams.test.RsSubscriber;
+import rx.reactivestreams.test.RxSubscriber;
 import rx.reactivestreams.test.IterablePublisher;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class NonTckTest {
     public void canSubscribeToObservableAsPublisher() {
         Observable<Integer> observable = Observable.just(1, 2, 3);
         Publisher<Integer> publisher = RxReactiveStreams.toPublisher(observable);
-        CollectingRsSubscriber<Integer> subscriber = new CollectingRsSubscriber<Integer>();
+        RsSubscriber<Integer> subscriber = new RsSubscriber<Integer>();
         publisher.subscribe(subscriber);
 
         assertEquals("no items sent", 0, subscriber.received.size());
@@ -51,7 +51,7 @@ public class NonTckTest {
     public void canSubscribeToPublisherAsObservable() {
         Publisher<Integer> publisher = new IterablePublisher<Integer>(Arrays.asList(1, 2, 3));
         Observable<Integer> observable = RxReactiveStreams.toObservable(publisher);
-        CollectingRxSubscriber<Integer> subscriber = new CollectingRxSubscriber<Integer>(0);
+        RxSubscriber<Integer> subscriber = new RxSubscriber<Integer>(0);
         observable.subscribe(subscriber);
 
         assertEquals("no items sent", 0, subscriber.received.size());
@@ -67,7 +67,7 @@ public class NonTckTest {
     public void rxSubscriberNotMakingInitialRequestConumesPublisher() {
         Publisher<Integer> publisher = new IterablePublisher<Integer>(Arrays.asList(1, 2, 3));
         Observable<Integer> observable = RxReactiveStreams.toObservable(publisher);
-        CollectingRxSubscriber<Integer> subscriber = new CollectingRxSubscriber<Integer>(-1); // -1 means no initial request
+        RxSubscriber<Integer> subscriber = new RxSubscriber<Integer>(-1); // -1 means no initial request
         observable.subscribe(subscriber);
 
         assertEquals("all items sent", 3, subscriber.received.size());

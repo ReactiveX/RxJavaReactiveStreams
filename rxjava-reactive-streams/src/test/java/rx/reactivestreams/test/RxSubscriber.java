@@ -15,21 +15,37 @@
  */
 package rx.reactivestreams.test;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import rx.Subscriber;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class CollectingRsSubscriber<T> implements Subscriber<T> {
+public class RxSubscriber<T> extends Subscriber<T> {
+
     public final List<T> received = new LinkedList<T>();
-    public Subscription subscription;
+    private final long initialRequest;
     public Throwable error;
     public boolean complete;
 
+    public RxSubscriber(long initialRequest) {
+        this.initialRequest = initialRequest;
+    }
+
     @Override
-    public void onSubscribe(Subscription s) {
-        subscription = s;
+    public void onStart() {
+        if (initialRequest >= 0) {
+            request(initialRequest);
+        }
+    }
+
+    @Override
+    public void onCompleted() {
+        complete = true;
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        error = e;
     }
 
     @Override
@@ -37,13 +53,8 @@ public class CollectingRsSubscriber<T> implements Subscriber<T> {
         received.add(t);
     }
 
-    @Override
-    public void onError(Throwable t) {
-        error = t;
+    public void makeRequest(long n) {
+        request(n);
     }
 
-    @Override
-    public void onComplete() {
-        complete = true;
-    }
 }

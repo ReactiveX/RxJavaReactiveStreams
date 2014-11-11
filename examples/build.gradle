@@ -1,5 +1,4 @@
 subprojects {
-    artifactoryPublish {
-        skip = true
-    }
+    bintrayUpload.enabled = false
+    artifactoryPublish.skip = true
 }

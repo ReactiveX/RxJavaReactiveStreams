@@ -15,3 +15,7 @@ idea {
 
 bintrayUpload.enabled = false
 artifactoryPublish.skip = true
+
+subprojects {
+    version = rootProject.version
+}

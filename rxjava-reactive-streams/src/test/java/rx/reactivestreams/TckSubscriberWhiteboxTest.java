@@ -113,17 +113,4 @@ public class TckSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Lo
         return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
     }
 
-    public void spec309_callingRequestWithNegativeNumberMustThrow() throws Throwable {
-        notVerified(); // nonsense test, subscriber doesn't create any Subscription implementations
-    }
-
-    @Override
-    public void spec309_callingRequestZeroMustThrow() throws Throwable {
-        notVerified(); // nonsense test, subscriber doesn't create any Subscription implementations
-    }
-
-    @Override
-    public void spec317_mustSignalOnErrorWhenPendingAboveLongMaxValue() throws Throwable {
-        notVerified(); // nonsense test, the publisher should implement this
-    }
 }

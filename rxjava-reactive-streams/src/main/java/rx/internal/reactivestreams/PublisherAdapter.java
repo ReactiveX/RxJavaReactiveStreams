@@ -23,6 +23,7 @@ import rx.Observable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PublisherAdapter<T> implements Publisher<T> {
 
@@ -39,9 +40,17 @@ public class PublisherAdapter<T> implements Publisher<T> {
         if (subscribers.add(s)) {
             observable.subscribe(new rx.Subscriber<T>() {
                 private final AtomicBoolean done = new AtomicBoolean();
+                private final AtomicLong pending = new AtomicLong(Long.MIN_VALUE);
 
                 private void doRequest(long n) {
-                    request(n);
+                    if (!done.get()) {
+                        if (pending.addAndGet(n) >= 0) {
+                            unsubscribe();
+                            onError(new IllegalStateException("Violation of rule 3.17 - more than Long.MAX_VALUE elements requested"));
+                        } else {
+                            request(n);
+                        }
+                    }
                 }
 
                 @Override
@@ -70,27 +79,34 @@ public class PublisherAdapter<T> implements Publisher<T> {
                     }
                 }
 
-                private void fireDone() {
-                    if (done.compareAndSet(false, true)) {
+                private boolean fireDone() {
+                    boolean first = done.compareAndSet(false, true);
+                    if (first) {
                         subscribers.remove(s);
                     }
+                    return first;
                 }
 
                 @Override
                 public void onCompleted() {
-                    s.onComplete();
+                    if (fireDone()) {
+                        s.onComplete();
+                    }
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    s.onError(e);
-                    fireDone();
+                    if (fireDone()) {
+                        s.onError(e);
+                    }
                 }
 
                 @Override
                 public void onNext(T t) {
-                    s.onNext(t);
-                    fireDone();
+                    if (!done.get()) {
+                        pending.decrementAndGet();
+                        s.onNext(t);
+                    }
                 }
             });
         } else {

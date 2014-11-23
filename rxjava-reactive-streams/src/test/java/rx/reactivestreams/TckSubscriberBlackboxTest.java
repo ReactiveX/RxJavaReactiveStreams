@@ -66,5 +66,4 @@ public class TckSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lo
         return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
     }
 
-
 }

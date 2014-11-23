@@ -2,8 +2,8 @@ description = "Adapter between RxJava and ReactiveStreams"
 
 dependencies {
     compile 'io.reactivex:rxjava:1.0.+'
-    compile 'org.reactivestreams:reactive-streams:0.4.0'
-    testCompile 'org.reactivestreams:reactive-streams-tck:0.4.0'
+    compile 'org.reactivestreams:reactive-streams:1.0.0.M1'
+    testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0.M1'
 }
 
 test {

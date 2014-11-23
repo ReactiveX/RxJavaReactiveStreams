@@ -23,6 +23,7 @@ import org.testng.annotations.Test;
 import rx.Observable;
 import rx.RxReactiveStreams;
 import rx.reactivestreams.test.CountdownIterable;
+import rx.schedulers.Schedulers;
 
 @Test
 public class TckPublisherTest extends PublisherVerification<Long> {
@@ -35,13 +36,11 @@ public class TckPublisherTest extends PublisherVerification<Long> {
     }
 
     @Override
-    public long maxElementsFromPublisher() {
-        return Long.MAX_VALUE;
-    }
-
-    @Override
     public Publisher<Long> createPublisher(long elements) {
-        return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
+        return RxReactiveStreams.toPublisher(
+            Observable.from(new CountdownIterable(elements))
+                .observeOn(Schedulers.computation())
+        );
     }
 
     @Override

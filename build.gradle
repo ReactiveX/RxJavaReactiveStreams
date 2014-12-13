@@ -12,10 +12,3 @@ idea {
         jdkName = "1.6"
     }
 }
-
-bintrayUpload.enabled = false
-artifactoryPublish.skip = true
-
-subprojects {
-    version = rootProject.version
-}

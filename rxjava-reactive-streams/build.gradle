@@ -1,5 +1,7 @@
 description = "Adapter between RxJava and ReactiveStreams"
 
+apply plugin: 'java'
+
 dependencies {
     compile 'io.reactivex:rxjava:1.0.+'
     compile 'org.reactivestreams:reactive-streams:1.0.0.M1'

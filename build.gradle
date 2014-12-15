@@ -1,6 +1,6 @@
 buildscript {
     repositories { jcenter() }
-    dependencies { classpath 'com.netflix.nebula:gradle-rxjava-project-plugin:1.12.+' }
+    dependencies { classpath 'com.netflix.nebula:gradle-rxjava-project-plugin:2.+' }
 }
 
 allprojects {
@@ -11,11 +11,4 @@ idea {
     project {
         jdkName = "1.6"
     }
-}
-
-bintrayUpload.enabled = false
-artifactoryPublish.skip = true
-
-subprojects {
-    version = rootProject.version
 }

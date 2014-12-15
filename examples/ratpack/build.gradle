@@ -1,3 +1,7 @@
+plugins {
+    id "org.gradle.java"
+}
+
 dependencies {
     testCompile project(":rxjava-reactive-streams")
     testCompile "io.ratpack:ratpack-test:0.9.10"

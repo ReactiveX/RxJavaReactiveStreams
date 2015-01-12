@@ -55,9 +55,19 @@ public abstract class RxReactiveStreams {
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
             public void call(final rx.Subscriber<? super T> rxSubscriber) {
-                publisher.subscribe(new SubscriberAdapter<T>(rxSubscriber));
+                publisher.subscribe(toSubscriber(rxSubscriber));
             }
         });
+    }
+
+    /**
+     * Convert an RxJava {@link rx.Subscriber} into a Reactive Streams {@link org.reactivestreams.Subscriber}.
+     *
+     * @param rxSubscriber an RxJava subscriber
+     * @return a Reactive Streams subscriber
+     */
+    public static <T> org.reactivestreams.Subscriber<T> toSubscriber(final rx.Subscriber<T> rxSubscriber) {
+        return new SubscriberAdapter<T>(rxSubscriber);
     }
 
 }

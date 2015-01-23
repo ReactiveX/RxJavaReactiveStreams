@@ -60,7 +60,8 @@ public class PublisherAdapter<T> implements Publisher<T> {
                         @Override
                         public void request(long n) {
                             if (n < 1) {
-                                throw new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0.");
+                                unsubscribe();
+                                onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                             }
 
                             requested.set(true);

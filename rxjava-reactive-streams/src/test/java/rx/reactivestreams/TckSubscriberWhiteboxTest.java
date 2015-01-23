@@ -34,7 +34,7 @@ public class TckSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Lo
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
 
-    protected TckSubscriberWhiteboxTest() {
+    public TckSubscriberWhiteboxTest() {
         super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS));
     }
 

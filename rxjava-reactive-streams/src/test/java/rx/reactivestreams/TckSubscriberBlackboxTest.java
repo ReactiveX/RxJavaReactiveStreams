@@ -31,7 +31,7 @@ public class TckSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lo
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
 
-    protected TckSubscriberBlackboxTest() {
+    public TckSubscriberBlackboxTest() {
         super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS));
     }
 

@@ -45,11 +45,18 @@ public class RsSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onSubscribe(Subscription s) {
+        if (s == null) {
+            throw new NullPointerException("onSubscribe(null)");
+        }
+
         subscription = s;
     }
 
     @Override
     public void onNext(T t) {
+        if (t == null) {
+            throw new NullPointerException("onNext(null)");
+        }
         received.add(t);
         for (Wait wait : waits) {
             if (received.size() >= wait.count) {
@@ -60,6 +67,9 @@ public class RsSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onError(Throwable t) {
+        if (t == null) {
+            throw new NullPointerException("onError(null)");
+        }
         error = t;
         unwaitAll();
     }

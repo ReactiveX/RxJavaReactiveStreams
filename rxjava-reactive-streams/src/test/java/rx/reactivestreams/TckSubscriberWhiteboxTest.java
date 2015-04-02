@@ -109,6 +109,11 @@ public class TckSubscriberWhiteboxTest extends SubscriberWhiteboxVerification<Lo
     }
 
     @Override
+    public Long createElement(int element) {
+        return Long.valueOf(Integer.toString(element));
+    }
+
+    @Override
     public Publisher<Long> createHelperPublisher(long elements) {
         return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
     }

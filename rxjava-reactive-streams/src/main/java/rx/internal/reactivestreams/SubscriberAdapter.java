@@ -34,6 +34,10 @@ public class SubscriberAdapter<T> implements Subscriber<T> {
 
     @Override
     public void onSubscribe(final Subscription rsSubscription) {
+        if (rsSubscription == null) {
+            throw new NullPointerException("onSubscribe(null)");
+        }
+
         if (started.compareAndSet(false, true)) {
             rxSubscriber.add(Subscriptions.create(new Action0() {
                 @Override
@@ -57,11 +61,17 @@ public class SubscriberAdapter<T> implements Subscriber<T> {
 
     @Override
     public void onNext(T t) {
+        if (t == null) {
+            throw new NullPointerException("onNext(null)");
+        }
         rxSubscriber.onNext(t);
     }
 
     @Override
     public void onError(Throwable t) {
+        if (t == null) {
+            throw new NullPointerException("onError(null)");
+        }
         rxSubscriber.onError(t);
     }
 

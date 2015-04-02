@@ -23,7 +23,6 @@ import rx.Observable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class PublisherAdapter<T> implements Publisher<T> {
 
@@ -40,16 +39,10 @@ public class PublisherAdapter<T> implements Publisher<T> {
         if (subscribers.add(s)) {
             observable.subscribe(new rx.Subscriber<T>() {
                 private final AtomicBoolean done = new AtomicBoolean();
-                private final AtomicLong pending = new AtomicLong(Long.MIN_VALUE);
 
                 private void doRequest(long n) {
                     if (!done.get()) {
-                        if (pending.addAndGet(n) >= 0) {
-                            unsubscribe();
-                            onError(new IllegalStateException("Violation of rule 3.17 - more than Long.MAX_VALUE elements requested"));
-                        } else {
-                            request(n);
-                        }
+                        request(n);
                     }
                 }
 
@@ -105,7 +98,6 @@ public class PublisherAdapter<T> implements Publisher<T> {
                 @Override
                 public void onNext(T t) {
                     if (!done.get()) {
-                        pending.decrementAndGet();
                         s.onNext(t);
                     }
                 }

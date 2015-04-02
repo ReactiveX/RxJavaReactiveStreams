@@ -44,7 +44,7 @@ public class TckPublisherTest extends PublisherVerification<Long> {
     }
 
     @Override
-    public Publisher<Long> createErrorStatePublisher() {
+    public Publisher<Long> createFailedPublisher() {
         // Null because we always successfully subscribe.
         // If the observable is in error state, it will subscribe and then emit the error as the first item
         // This is not an “error state” publisher as defined by RS

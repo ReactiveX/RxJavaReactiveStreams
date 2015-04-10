@@ -23,24 +23,17 @@ import org.testng.annotations.Test;
 import rx.Observable;
 import rx.RxReactiveStreams;
 import rx.reactivestreams.test.CountdownIterable;
-import rx.schedulers.Schedulers;
 
 @Test
-public class TckPublisherTest extends PublisherVerification<Long> {
+public class TckSynchronousPublisherTest extends PublisherVerification<Long> {
 
-    public static final long DEFAULT_TIMEOUT_MILLIS = 300L;
-    public static final long PUBLISHER_REFERENCE_CLEANUP_TIMEOUT_MILLIS = 1000L;
-
-    public TckPublisherTest() {
-        super(new TestEnvironment(DEFAULT_TIMEOUT_MILLIS), PUBLISHER_REFERENCE_CLEANUP_TIMEOUT_MILLIS);
+    public TckSynchronousPublisherTest() {
+        super(new TestEnvironment(300L));
     }
 
     @Override
     public Publisher<Long> createPublisher(long elements) {
-        return RxReactiveStreams.toPublisher(
-            Observable.from(new CountdownIterable(elements))
-                .observeOn(Schedulers.computation())
-        );
+        return RxReactiveStreams.toPublisher(Observable.from(new CountdownIterable(elements)));
     }
 
     @Override

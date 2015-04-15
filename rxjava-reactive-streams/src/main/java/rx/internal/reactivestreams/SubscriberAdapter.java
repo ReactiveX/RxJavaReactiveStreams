@@ -15,13 +15,9 @@
  */
 package rx.internal.reactivestreams;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-import rx.Producer;
-import rx.functions.Action0;
-import rx.subscriptions.Subscriptions;
-
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.reactivestreams.*;
 
 public class SubscriberAdapter<T> implements Subscriber<T> {
 
@@ -39,21 +35,10 @@ public class SubscriberAdapter<T> implements Subscriber<T> {
         }
 
         if (started.compareAndSet(false, true)) {
-            rxSubscriber.add(Subscriptions.create(new Action0() {
-                @Override
-                public void call() {
-                    rsSubscription.cancel();
-                }
-            }));
+            RxJavaSynchronizedProducer sp = new RxJavaSynchronizedProducer(rsSubscription);
+            rxSubscriber.add(sp);
             rxSubscriber.onStart();
-            rxSubscriber.setProducer(new Producer() {
-                @Override
-                public void request(long n) {
-                    if (n > 0) {
-                        rsSubscription.request(n);
-                    }
-                }
-            });
+            rxSubscriber.setProducer(sp);
         } else {
             rsSubscription.cancel();
         }

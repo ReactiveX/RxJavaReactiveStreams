@@ -4,8 +4,8 @@ apply plugin: 'java'
 
 dependencies {
     compile 'io.reactivex:rxjava:1.0.+'
-    compile 'org.reactivestreams:reactive-streams:1.0.0.RC5'
-    testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0.RC5'
+    compile 'org.reactivestreams:reactive-streams:1.0.0'
+    testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
 }
 
 test {

@@ -15,22 +15,24 @@
  */
 package rx.reactivestreams;
 
-import org.reactivestreams.Publisher;
-import org.testng.annotations.Test;
-import rx.Observable;
-import rx.Subscriber;
-import rx.reactivestreams.test.IterablePublisher;
-import rx.reactivestreams.test.RsSubscriber;
-import rx.reactivestreams.test.RxSubscriber;
-
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
 import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static rx.RxReactiveStreams.toObservable;
 import static rx.RxReactiveStreams.toPublisher;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+import org.reactivestreams.Publisher;
+import org.testng.annotations.Test;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.reactivestreams.test.IterablePublisher;
+import rx.reactivestreams.test.RsSubscriber;
+import rx.reactivestreams.test.RxSubscriber;
+import rx.subjects.PublishSubject;
 
 public class NonTckTest {
 
@@ -145,4 +147,27 @@ public class NonTckTest {
         subscriber.subscription.cancel();
     }
 
+    @Test
+    public void subscribeToPublishSubjectEmitsRuleViolationException() {
+        PublishSubject<Integer> source = PublishSubject.create();
+        RsSubscriber<Integer> rxs = subscribe(source);
+        
+        source.onNext(1);
+        
+        assertEquals(0, rxs.received.size());
+        assertNotNull(rxs.error);
+    }
+    @Test
+    public void subscribeToPublishSubjectEmitsRuleViolationExceptionAfterOneRequest() {
+        PublishSubject<Integer> source = PublishSubject.create();
+        RsSubscriber<Integer> rxs = subscribe(source);
+        
+        rxs.subscription.request(1);
+        source.onNext(1);
+
+        source.onNext(2);
+
+        assertEquals(1, rxs.received.size());
+        assertNotNull(rxs.error);
+    }
 }

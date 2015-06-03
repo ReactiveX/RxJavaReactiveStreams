@@ -15,20 +15,23 @@
  */
 package rx.internal.reactivestreams;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import rx.Observable;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import rx.Observable;
+import rx.internal.operators.BackpressureUtils;
 
 public class PublisherAdapter<T> implements Publisher<T> {
 
     private final Observable<T> observable;
 
-    private final Set<Subscriber<?>> subscribers = new HashSet<Subscriber<?>>();
+    private final ConcurrentMap<Subscriber<?>, Object> subscribers = new ConcurrentHashMap<Subscriber<?>, Object>();
 
     public PublisherAdapter(final Observable<T> observable) {
         this.observable = observable.serialize();
@@ -36,12 +39,13 @@ public class PublisherAdapter<T> implements Publisher<T> {
 
     @Override
     public void subscribe(final Subscriber<? super T> s) {
-        if (subscribers.add(s)) {
+        if (subscribers.putIfAbsent(s, s) == null) {
             observable.subscribe(new rx.Subscriber<T>() {
                 private final AtomicBoolean done = new AtomicBoolean();
-
+                private final AtomicLong childRequested = new AtomicLong();
                 private void doRequest(long n) {
                     if (!done.get()) {
+                        BackpressureUtils.getAndAddRequest(childRequested, n);
                         request(n);
                     }
                 }
@@ -55,6 +59,7 @@ public class PublisherAdapter<T> implements Publisher<T> {
                             if (n < 1) {
                                 unsubscribe();
                                 onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                                return;
                             }
 
                             requested.set(true);
@@ -98,7 +103,16 @@ public class PublisherAdapter<T> implements Publisher<T> {
                 @Override
                 public void onNext(T t) {
                     if (!done.get()) {
-                        s.onNext(t);
+                        if (childRequested.get() > 0) {
+                            s.onNext(t);
+                            childRequested.decrementAndGet();
+                        } else {
+                            try {
+                                onError(new IllegalStateException("1.1 source doesn't respect backpressure"));
+                            } finally {
+                                unsubscribe();
+                            }
+                        }
                     }
                 }
             });

@@ -16,8 +16,8 @@
 package rx;
 
 import org.reactivestreams.Publisher;
-import rx.internal.reactivestreams.PublisherAdapter;
-import rx.internal.reactivestreams.SubscriberAdapter;
+
+import rx.internal.reactivestreams.*;
 
 /**
  * This type provides static factory methods for converting to and from RxJava types and Reactive Streams types.
@@ -70,4 +70,66 @@ public abstract class RxReactiveStreams {
         return new SubscriberAdapter<T>(rxSubscriber);
     }
 
+    /**
+     * Converts an RxJava Completable into a Publisher that emits only onError or onComplete.
+     * @param <T> the target value type
+     * @param completable the Completable instance to convert
+     * @return the new Publisher instance
+     * @since 1.1
+     * @throws NullPointerException if completable is null
+     */
+    public static <T> Publisher<T> toPublisher(Completable completable) {
+        if (completable == null) {
+            throw new NullPointerException("completable");
+        }
+        return new CompletableAsPublisher<T>(completable);
+    }
+    
+    /**
+     * Converst a Publisher into a Completable by ignoring all onNext values and emitting
+     * onError or onComplete only.
+     * @param publisher the Publisher instance to convert
+     * @return the Completable instance
+     * @since 1.1
+     * @throws NullPointerException if publisher is null
+     */
+    public static Completable toCompletable(Publisher<?> publisher) {
+        if (publisher == null) {
+            throw new NullPointerException("publisher");
+        }
+        return Completable.create(new PublisherAsCompletable(publisher));
+    }
+    
+    /**
+     * Converts a Single into a Publisher which emits an onNext+onComplete if
+     * the source Single signals a non-null onSuccess; or onError if the source signals
+     * onError(NullPointerException) or a null value.
+     * @param single the Single instance to convert
+     * @return the Publisher instance
+     * @since 1.1
+     * @throws NullPointerException if single is null
+     */
+    public static <T> Publisher<T> toPublisher(Single<T> single) {
+        if (single == null) {
+            throw new NullPointerException("single");
+        }
+        return new SingleAsPublisher<T>(single);
+    }
+    
+    /**
+     * Converts a Publisher into a Single which emits onSuccess if the
+     * Publisher signals an onNext+onComplete; or onError if the publisher signals an
+     * onError, the source Publisher is empty (NoSuchElementException) or the
+     * source Publisher signals more than one onNext (IndexOutOfBoundsException).
+     * @param publisher the Publisher instance to convert
+     * @return the Single instance
+     * @since 1.1
+     * @throws NullPointerException if publisher is null
+     */
+    public static <T> Single<T> toSingle(Publisher<T> publisher) {
+        if (publisher == null) {
+            throw new NullPointerException("publisher");
+        }
+        return Single.create(new PublisherAsSingle<T>(publisher));
+    }
 }

@@ -36,6 +36,7 @@ public abstract class RxReactiveStreams {
      * <p/>
      * Use this method when you have an RxJava observable, that you want to be consumed by another library.
      *
+     * @param <T> the value type
      * @param observable the {@link Observable} to convert
      * @return the converted {@link Publisher}
      */
@@ -48,6 +49,7 @@ public abstract class RxReactiveStreams {
      * <p/>
      * Use this method when you have a stream from another library, that you want to be consume as an RxJava observable.
      *
+     * @param <T> the value type
      * @param publisher the {@link Publisher} to convert.
      * @return the converted {@link Observable}
      */
@@ -63,6 +65,7 @@ public abstract class RxReactiveStreams {
     /**
      * Convert an RxJava {@link rx.Subscriber} into a Reactive Streams {@link org.reactivestreams.Subscriber}.
      *
+     * @param <T> the value type
      * @param rxSubscriber an RxJava subscriber
      * @return a Reactive Streams subscriber
      */
@@ -104,6 +107,7 @@ public abstract class RxReactiveStreams {
      * Converts a Single into a Publisher which emits an onNext+onComplete if
      * the source Single signals a non-null onSuccess; or onError if the source signals
      * onError(NullPointerException) or a null value.
+     * @param <T> the value type
      * @param single the Single instance to convert
      * @return the Publisher instance
      * @since 1.1
@@ -121,6 +125,7 @@ public abstract class RxReactiveStreams {
      * Publisher signals an onNext+onComplete; or onError if the publisher signals an
      * onError, the source Publisher is empty (NoSuchElementException) or the
      * source Publisher signals more than one onNext (IndexOutOfBoundsException).
+     * @param <T> the value type
      * @param publisher the Publisher instance to convert
      * @return the Single instance
      * @since 1.1

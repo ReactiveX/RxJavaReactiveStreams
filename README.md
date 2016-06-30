@@ -17,6 +17,14 @@ public abstract class RxReactiveStreams {
 
     public static <T> Observable<T> toObservable(Publisher<T> publisher) { … }
 
+    public static <T> Publisher<T> toPublisher(Single<T> observable) { … }
+
+    public static <T> Single<T> toSingle(Publisher<T> publisher) { … }
+
+    public static <T> Publisher<T> toPublisher(Completable observable) { … }
+
+    public static Completable toObservable(Publisher<?> publisher) { … }
+
 }
 ```
 

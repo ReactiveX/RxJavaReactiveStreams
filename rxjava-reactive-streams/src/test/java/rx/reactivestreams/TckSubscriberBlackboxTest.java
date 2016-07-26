@@ -37,7 +37,7 @@ public class TckSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lo
 
     @Override
     public Subscriber<Long> createSubscriber() {
-        return new SubscriberAdapter<Long>(new rx.Subscriber<Long>() {
+        rx.Subscriber<Long> rxSubscriber = new rx.Subscriber<Long>() {
 
             @Override
             public void onStart() {
@@ -58,7 +58,9 @@ public class TckSubscriberBlackboxTest extends SubscriberBlackboxVerification<Lo
             public void onNext(Long aLong) {
                 request(1);
             }
-        });
+        };
+        rxSubscriber.onStart(); // Observable.subscribe() calls this automatically
+        return new SubscriberAdapter<Long>(rxSubscriber);
     }
 
     @Override

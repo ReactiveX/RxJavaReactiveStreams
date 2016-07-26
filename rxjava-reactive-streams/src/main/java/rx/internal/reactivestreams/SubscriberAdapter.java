@@ -37,7 +37,6 @@ public class SubscriberAdapter<T> implements Subscriber<T> {
         if (started.compareAndSet(false, true)) {
             RxJavaSynchronizedProducer sp = new RxJavaSynchronizedProducer(rsSubscription);
             rxSubscriber.add(sp);
-            rxSubscriber.onStart();
             rxSubscriber.setProducer(sp);
         } else {
             rsSubscription.cancel();

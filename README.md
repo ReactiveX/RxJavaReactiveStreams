@@ -23,7 +23,7 @@ public abstract class RxReactiveStreams {
 
     public static <T> Publisher<T> toPublisher(Completable observable) { … }
 
-    public static Completable toObservable(Publisher<?> publisher) { … }
+    public static Completable toCompletable(Publisher<?> publisher) { … }
 
 }
 ```

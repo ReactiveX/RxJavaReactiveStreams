@@ -16,13 +16,13 @@
 
 package rx.internal.reactivestreams;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import rx.Single;
+import rx.SingleSubscriber;
 
-import rx.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Wraps a Single and exposes it as a Publisher.
@@ -30,9 +30,9 @@ import rx.*;
  * @param <T> the value type
  */
 public final class SingleAsPublisher<T> implements Publisher<T> {
-    
+
     final Single<T> single;
-    
+
     public SingleAsPublisher(Single<T> single) {
         this.single = single;
     }
@@ -41,31 +41,31 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
     public void subscribe(Subscriber<? super T> s) {
         SingleAsPublisherSubscriber<T> parent = new SingleAsPublisherSubscriber<T>(s);
         s.onSubscribe(parent);
-        
+
         single.subscribe(parent);
     }
-    
+
     static final class SingleAsPublisherSubscriber<T> extends SingleSubscriber<T>
     implements Subscription {
-        
+
         final Subscriber<? super T> actual;
 
         final AtomicInteger state;
-        
+
         T value;
-        
+
         volatile boolean cancelled;
-        
+
         static final int NO_REQUEST_NO_VALUE = 0;
         static final int NO_REQUEST_HAS_VALUE = 1;
         static final int HAS_REQUEST_NO_VALUE = 2;
         static final int HAS_REQUEST_HAS_VALUE = 3;
-        
+
         public SingleAsPublisherSubscriber(Subscriber<? super T> actual) {
             this.actual = actual;
             this.state = new AtomicInteger();
         }
-        
+
         @Override
         public void onSuccess(T value) {
             if (cancelled) {
@@ -78,7 +78,7 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
             }
             for (;;) {
                 int s = state.get();
-                
+
                 if (s == NO_REQUEST_HAS_VALUE || s == HAS_REQUEST_HAS_VALUE || cancelled) {
                     break;
                 } else
@@ -87,6 +87,7 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
                     if (!cancelled) {
                         actual.onComplete();
                     }
+                    return;
                 } else {
                     this.value = value;
                     if (state.compareAndSet(s, NO_REQUEST_HAS_VALUE)) {
@@ -95,7 +96,7 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
                 }
             }
         }
-        
+
         @Override
         public void onError(Throwable error) {
             if (cancelled) {
@@ -104,7 +105,7 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
             state.lazySet(HAS_REQUEST_HAS_VALUE);
             actual.onError(error);
         }
-        
+
         @Override
         public void request(long n) {
             if (n > 0) {
@@ -112,12 +113,12 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
                     int s = state.get();
                     if (s == HAS_REQUEST_HAS_VALUE || s == HAS_REQUEST_NO_VALUE || cancelled) {
                         break;
-                    } else
+                    }
                     if (s == NO_REQUEST_HAS_VALUE) {
                         if (state.compareAndSet(s, HAS_REQUEST_HAS_VALUE)) {
                             T v = value;
                             value = null;
-                            
+
                             actual.onNext(v);
                             if (!cancelled) {
                                 actual.onComplete();
@@ -125,10 +126,13 @@ public final class SingleAsPublisher<T> implements Publisher<T> {
                         }
                         break;
                     }
+                    if (state.compareAndSet(NO_REQUEST_NO_VALUE, HAS_REQUEST_NO_VALUE)) {
+                        break;
+                    }
                 }
             }
         }
-        
+
         @Override
         public void cancel() {
             if (!cancelled) {

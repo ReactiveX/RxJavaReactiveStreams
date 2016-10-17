@@ -1,5 +1,9 @@
 # RxJava Reactive Streams
 
+<a href='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams/builds'><img src='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams.svg?branch=1.x'></a>
+[![codecov.io](http://codecov.io/github/ReactiveX/RxJavaReactiveStreams/coverage.svg?branch=1.x)](http://codecov.io/github/ReactiveX/RxJavaReactiveStreams?branch=1.x)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.reactivex/rxjava-reactive-streams/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.reactivex/rxjava-reactive-streams)
+
 This library provides adapters between RxJava and [Reactive Streams](http://www.reactive-streams.org).
 The Reactive Streams standard defines an API and runtime semantics for reactive data streams, that different tools can implement in order to interoperate with each other.
 This library allows RxJava to interoperate with other implementors of the Reactive Streams API.
@@ -36,10 +40,6 @@ See the [Reactive Streams](http://www.reactive-streams.org) website for links to
 and can therefore interoperate with RxJava via these methods.
 
 Learn more about RxJava on the <a href="https://github.com/ReactiveX/RxJava/wiki">Wiki Home</a> and the <a href="http://techblog.netflix.com/2013/02/rxjava-netflix-api.html">Netflix TechBlog post</a> where RxJava was introduced.
-
-## Master Build Status
-
-<a href='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams/builds'><img src='https://travis-ci.org/ReactiveX/RxJavaReactiveStreams.svg?branch=0.x'></a>
 
 ## Communication
 

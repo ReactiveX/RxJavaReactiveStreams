@@ -1,6 +1,7 @@
 description = "Adapter between RxJava and ReactiveStreams"
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 
 dependencies {
     compile 'io.reactivex:rxjava:1.2.1'
@@ -26,3 +27,16 @@ useTestNG()
      }
  }
 
+
+jacoco {
+    toolVersion = '0.7.7.201606060606' // See http://www.eclemma.org/jacoco/.
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+build.dependsOn jacocoTestReport

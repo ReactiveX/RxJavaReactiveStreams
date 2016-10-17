@@ -16,9 +16,11 @@
 
 package rx.internal.reactivestreams;
 
-import org.reactivestreams.*;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
-import rx.Completable;
+import rx.*;
 
 /**
  * Wraps a Completable and exposes it as a Publisher.
@@ -35,11 +37,14 @@ public final class CompletableAsPublisher<T> implements Publisher<T> {
     
     @Override
     public void subscribe(Subscriber<? super T> s) {
+        if (s == null) {
+            throw new NullPointerException();
+        }
         completable.subscribe(new CompletableAsPublisherSubscriber<T>(s));
     }
     
     static final class CompletableAsPublisherSubscriber<T>
-    implements Completable.CompletableSubscriber, Subscription {
+    implements CompletableSubscriber, Subscription {
 
         final Subscriber<? super T> actual;
 

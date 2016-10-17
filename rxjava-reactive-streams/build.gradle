@@ -3,11 +3,26 @@ description = "Adapter between RxJava and ReactiveStreams"
 apply plugin: 'java'
 
 dependencies {
-    compile 'io.reactivex:rxjava:1.1.8'
+    compile 'io.reactivex:rxjava:1.2.1'
     compile 'org.reactivestreams:reactive-streams:1.0.0'
     testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
+    testCompile group: 'org.testng', name: 'testng', version: '6.9.10'
 }
 
 test {
-    useTestNG()
-}
+useTestNG()
+     testLogging  {
+        events=['passed', 'skipped', 'failed']
+        exceptionFormat="full"
+
+        debug.events = ['passed', 'skipped', 'failed']
+        debug.exceptionFormat="full"
+
+        info.events = ['passed', 'skipped', 'failed']
+        info.exceptionFormat="full"
+        
+        warn.events = ['passed', 'skipped', 'failed']
+        warn.exceptionFormat="full"
+     }
+ }
+

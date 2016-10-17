@@ -18,12 +18,12 @@ package rx.internal.reactivestreams;
 
 import org.reactivestreams.*;
 
-import rx.Completable.CompletableSubscriber;
+import rx.CompletableSubscriber;
 
 /**
  * Wraps an arbitrary Publisher and exposes it as a Completable, ignoring any onNext events.
  */
-public final class PublisherAsCompletable implements rx.Completable.CompletableOnSubscribe {
+public final class PublisherAsCompletable implements rx.Completable.OnSubscribe {
 
     final Publisher<?> publisher;
 
